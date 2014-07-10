@@ -1,5 +1,3 @@
-// Create a processing sketch object
-
 
 // Coin flip
 function coin_flip(){
@@ -22,7 +20,7 @@ Blob.prototype.update = function(){
 
     if(this.x < 0) {
         this.x = this.processing.width;
-    } else if (this.x < 0 || this.x > this.processing.width) {
+    } else if (this.x > this.processing.width) {
         this.x = 0;
     }
 
@@ -41,7 +39,7 @@ Blob.prototype.draw = function(){
     this.processing.ellipse(this.x, this.y, 10, 10);
 };
 
-
+// Create a processing sketch object
 var sketch = new Processing.Sketch();
 
 sketch.attachFunction = function(processing){
