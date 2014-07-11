@@ -47,6 +47,15 @@ color random_color()
   return color( random(255), random(255), random(255), 220 );
 }
 
+float angle_change()
+{
+  float magic = 0;
+  if ( random( 10 ) > 7 ) {
+    magic = random(-360, 360);
+  }
+  return magic;
+}
+
 // CLASSES //
 
 // Defines Toggle button
@@ -90,24 +99,11 @@ class Blob
     cfill = random_color();
   }
   
-  float[] separate( int x, int y )
-  {
-    float ideal = 2.0;
-    float dx = 0;
-    float dy = 0;
-    float[] offset = { dx, dy };
-    
-    for ( int i = 0; i < blobs.length; i++ ) {
-      Blob b = blobs[ i ];
-      // if b != me: do stuff;
-    
-    }; 
-    
-    return offset;
-  }
-  
+
+
   void update()
   {
+    angle = ( angle + angle_change() ) % 360;
     float dx = cos( angle ) * speed;
     float dy = sin( angle ) * speed;
     x += dx;
@@ -132,12 +128,12 @@ class Blob
   
   void draw()
   {
-    strokeWeight( 2 );
+    stroke( 2 );
     stroke( cstroke );
     fill( cfill );
     ellipse( x, y, 8, 8 );
     //float x1 = x - 8;
-    //float y1 = y - 8;
+    //flo = y - 8;
     //float y3 = y + 8;
     //triangle( x1, y1, x, y, x1, y3 );
   }
