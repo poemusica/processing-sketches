@@ -1,8 +1,10 @@
 
 // GLOBAL VARIABLES //
 
-Blob[] blobs = new Blob[ 20 ];
+Blob[] blobs = new Blob[ 10 ];
 Button toggle = new Button();
+
+boolean FLOCKING = true;
 
 // MAIN SETUP AND DRAWING //
 
@@ -13,7 +15,7 @@ void setup()
   smooth();
   frameRate( 30 );
   
-  for ( int i = 0; i < 20; i++ ) 
+  for ( int i = 0; i < blobs.length; i++ ) 
   {
     float x = random( width );
     float y = random( height );
@@ -49,10 +51,8 @@ color random_color()
 
 float angle_change()
 {
-  float magic = 0;
-  if ( random( 10 ) > 7 ) {
-    magic = random(-360, 360);
-  }
+  float limit = radians( 10 );
+  float magic = random( -limit, limit );
   return magic;
 }
 
@@ -99,24 +99,105 @@ class Blob
     cfill = random_color();
   }
   
+  // Alignement
+  float align()
+  {
+    float new_angle = 1.0;
+    
+    for ( int i = 0; i < blobs.length; i++ )
+    {
+      
+      Blob b = blobs[ i ];
+      
+      if ( b != this )
+      {
+        new_angle += b.angle;
+      }
+      
+    }
+    new_angle = new_angle / blobs.length;
+    return new_angle / 8;
+  }
+  
+  // Cohesion
+  float [] cohere()
+  {
+    float center_x = 0;
+    float center_y = 0;
+    
+    for ( int i = 0; i < blobs.length; i++ )
+    {
+      Blob b = blobs[ i ];
+      if ( b != this )
+      {
+        center_x += b.x;
+        center_y += b.y;
+      }
+      
+      float n = blobs.length;
+      center_x = center_x / ( n - 1 );
+      center_y = center_y / ( n - 1 );
+    }
+    float[] offset = { center_x / 10, center_y / 10 };
+    return offset;
+  }
+
+  // Separation
+  float[] separate()
+  {
+    float ideal = 5;
+    float dx = 0;
+    float dy = 0;
+    
+    for ( int i = 0; i < blobs.length; i++ )
+    {
+      Blob b = blobs[ i ];
+      if ( b != this ) 
+      {
+        float d = dist( b.x, b.y, x, y );
+        if ( d < ideal )
+        {
+          dx = dx - ( b.x - x );
+          dy = dy - (b.y - y );
+        }
+      }
+    } 
+  
+  float[] offset = { dx, dy };
+  return offset;
+  }
 
 
   void update()
   {
-    angle = ( angle + angle_change() ) % 360;
+    if ( !FLOCKING )
+    {
+      angle = ( angle + angle_change() % ( 2 * PI) );
+      float dx = cos( angle ) * speed;
+      float dy = sin( angle ) * speed;
+      x += dx;
+      y += dy;
+    } else
+    {
+      float[] sep = separate(); 
+      float [] coh = cohere();
+      x += sep[ 0 ] + coh[ 0 ];
+      y += sep[ 1 ] + coh[ 1 ];
+      angle += align() % ( 2 * PI );
+    }
+    
     float dx = cos( angle ) * speed;
     float dy = sin( angle ) * speed;
     x += dx;
     y += dy;
     
-    if ( x < 0 )
+    if ( x < 0 ) 
     {
       x = width;
     } else if ( x > width )
     {
       x = 0;
     }
-    
     if ( y < 0 )
     {
       y = height;
@@ -125,7 +206,8 @@ class Blob
       y = 0;
     }
   }
-  
+      
+      
   void draw()
   {
     stroke( 2 );
