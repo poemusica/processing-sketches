@@ -3,7 +3,7 @@
 // Bind Javascript
 interface Javascript {}
 Javascript javascript = null;
-void bindJavascript( Javascript js ) { javascript = js; println( "success" );}
+void bindJavascript( Javascript js ) { javascript = js; }
 
 // Setup the Processing Canvas
 void setup()
@@ -37,7 +37,9 @@ void draw()
     b.draw();
   }
   
-  if ( javascript == null )
+  // If javascript is not bound, draw buttons in processing.
+  // Provides one second delay for binding.
+  if ( javascript == null && frameCount > 30 )
   {
     flockButton.draw();
     trailButton.draw();

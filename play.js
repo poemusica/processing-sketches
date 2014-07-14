@@ -1,28 +1,27 @@
-// bind javascript to all Processing instances
-// function bindJavascript()
-// {
-// 	var canvaslist = document.getElementsByTagName("canvas");
-// 	for(var c=0; c<canvaslist.length; c++)
-// 	{
-// 		console.log('foo');
-// 		var pjs = Processing.getInstanceById(canvaslist[c]);
-// 		try { pjs.bindJavascript(this); }
-// 		catch(e) { setTimeout(bindJavascript, 10); }
-// 	}
-// }
 
+// Bind javascript to processing instance
 
+function bindJavascript()
+{
+	var pjs = Processing.getInstanceById("mysketch");
+	if (pjs !== null)
+	{
+		try { pjs.bindJavascript(this); }
+		catch(e) { console.log(e); }
+	}
+	else setTimeout(bindJavascript, 250);
+}
 
-// Access to Processing (top-level functions only)
+// Access to processing (top-level functions only)
 
 function toggleFlock()
 {
-	var mysketch = Processing.getInstanceById("mysketch");
-	mysketch.flockClick();
+	var pjs = Processing.getInstanceById("mysketch");
+	pjs.flockClick();
 }
 
 function toggleTrails()
 {
-	var mysketch = Processing.getInstanceById("mysketch");
-	mysketch.trailClick();
+	var pjs = Processing.getInstanceById("mysketch");
+	pjs.trailClick();
 }
