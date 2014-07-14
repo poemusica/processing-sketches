@@ -1,4 +1,7 @@
-// Global
+// Globals
+
+Blob[] blobs = new Blob[ 40 ];
+
 static float ALI_STRENGTH = 1;
 static float COH_STRENGTH = 1;
 static float SEP_STRENGTH = 3;
@@ -17,21 +20,21 @@ class Blob
     vel = PVector.random2D();
     vel.setMag( 1.275 );
     
-    cstroke = random_color();
-    cfill = random_color();
+    cstroke = randomColor();
+    cfill = randomColor();
   }
   
   void update()
   {
     if ( !FLOCKING )
     {
-      //random-ish motion
-      vel.rotate(  angle_change() );  
+      //random motion
+      vel.rotate(  angleChange() );  
     } 
     
     else
     {
-      // flocking algorithms go here
+      // flocking
       
       PVector coh = new PVector( 0, 0 );
       PVector sep = new PVector( 0, 0 );
