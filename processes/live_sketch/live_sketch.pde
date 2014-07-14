@@ -30,9 +30,8 @@ void draw()
     background( 0xFF33FFCC ); 
   }
   
-  for ( int i = 0; i < blobs.length; i++ )
+  for ( Blob b : blobs )
   {
-    Blob b = blobs[ i ];
     b.update();
     b.draw();
   }
@@ -43,6 +42,8 @@ void draw()
   {
     flockButton.draw();
     trailButton.draw();
+    attractButton.draw();
+    repelButton.draw();
   }
 
 }
@@ -60,6 +61,15 @@ void mouseClicked( MouseEvent e )
     trailClick();
   }
   
+  if ( attractButton.contains( e.getX(), e.getY() ) )
+  {
+    attractClick();
+  }
+  
+  if ( repelButton.contains( e.getX(), e.getY() ) )
+  {
+    repelClick();
+  }
   
 }
 
@@ -70,11 +80,4 @@ void mouseClicked( MouseEvent e )
 color randomColor() 
 {
   return color( random(255), random(255), random(255), 220 );
-}
-
-float angleChange()
-{
-  float limit = radians( 15 );
-  float magic = random( -limit, limit );
-  return magic;
 }

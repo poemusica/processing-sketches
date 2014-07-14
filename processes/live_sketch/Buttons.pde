@@ -2,27 +2,40 @@
 
 boolean FLOCKING = true;
 boolean TRAIL = false;
+boolean ATTRACT = false;
+boolean REPEL = false;
 
-Button flockButton = new Button( new PVector( 30, 445 ), 105, 35, "Toggle Flocking");
-Button trailButton = new Button( new PVector( 165, 445), 105, 35, "Toggle Trails" );
+Button flockButton = new Button( new PVector( 10 , height + 5 ), 105, 35, "Toggle Flocking");
+Button trailButton = new Button( new PVector( 120, height + 5 ), 105, 35, "Toggle Trails" );
+Button attractButton = new Button( new PVector( 230, height + 5 ), 105, 35, "Toggle Attract" );
+Button repelButton = new Button( new PVector( 340, height + 5 ), 105, 35, "Toggle Repel" );
 
 // Javascript Helpers
 void flockClick()
 {
   FLOCKING = !FLOCKING;
-  color f = flockButton.cfill;
-  flockButton.cfill = flockButton.cstroke;
-  flockButton.cstroke = f;
+  flockButton.swapColor();
 }
 
 void trailClick()
 {
   TRAIL = !TRAIL;
-  color f = trailButton.cfill;
-  trailButton.cfill = trailButton.cstroke;
-  trailButton.cstroke = f;
+  trailButton.swapColor();
 }
 
+void attractClick()
+{
+  ATTRACT = !ATTRACT;
+  if ( REPEL == true ) { REPEL = false; }
+  attractButton.swapColor();
+}
+
+void repelClick()
+{
+  REPEL = !REPEL;
+  if ( ATTRACT = true ) { ATTRACT = false; }
+  repelButton.swapColor();
+}
 
 // Defines Button class
 class Button
@@ -59,4 +72,10 @@ class Button
     text( label, pos.x + 5, pos.y + bheight/2 + 4 );
   }
   
+  void swapColor()
+  {
+    color f = cfill;
+    cfill = cstroke;
+    cstroke = f;
+  }
 }
