@@ -25,3 +25,15 @@ function toggleTrails()
 	var pjs = Processing.getInstanceById("mysketch");
 	pjs.trailClick();
 }
+
+function toggleAttract()
+{
+	var pjs = Processing.getInstanceById("mysketch");
+	pjs.attractClick();
+}
+
+function toggleRepel()
+{
+	var pjs = Processing.getInstanceById("mysketch");
+	pjs.repelClick();
+}
