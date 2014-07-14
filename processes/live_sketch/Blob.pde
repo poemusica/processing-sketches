@@ -1,7 +1,8 @@
 // Globals
 
-Blob[] blobs = new Blob[ 40 ];
+Blob[] blobs = new Blob[ 80 ];
 
+static float LOCAL_RANGE = 10; // multiplied by r
 static float ALI_STRENGTH = 1;
 static float COH_STRENGTH = 1;
 static float SEP_STRENGTH = 3;
@@ -13,6 +14,7 @@ class Blob
   // instance variables
   PVector pos, vel;
   color cstroke, cfill;
+  int r = 8;
   
   Blob ( float x, float y ) 
   {
@@ -49,49 +51,45 @@ class Blob
         b = blobs[ i ];
         if ( b == this ) { continue; }
         
-        coh.add( b.pos );
-        ali.add( b.vel );
+        float d = pos.dist( b.pos );
+        if ( d > r * LOCAL_RANGE ) { continue; }
         
-        if ( pos.dist( b.pos ) < SEP_IDEAL ) 
+        v = PVector.sub( b.pos, pos );
+        v.normalize();
+        v.div( sq( d ) );
+        coh.add( v );
+        
+        if ( d < SEP_IDEAL ) 
         {
           sep.add( PVector.sub( pos, b.pos ) );
         }
         
+        ali.add( b.vel );
+        
       }
-      
-      ali.div( n - 1 );
-      ali.sub( pos );
-      ali.setMag( ALI_STRENGTH );
-      vel.add( ali );
-      
-      coh.div( n - 1 );
-      coh.sub( pos );
+
       coh.setMag( COH_STRENGTH );
       vel.add( coh );
       
       sep.setMag( SEP_STRENGTH );
       vel.add( sep );
       
+      ali.div( n - 1 );
+      ali.setMag( ALI_STRENGTH );
+      vel.add( ali );
+      
     }
     
     vel.limit( 5 );
     pos.add( vel );
     
-    // screen wrap  
-    if ( pos.x < -8 ) 
-    {
-      pos.x = width + 8;
-    } else if ( pos.x > width + 8 )
-    {
-      pos.x = -8;
-    }
-    if ( pos.y < -8 )
-    {
-      pos.y = height + 8;
-    } else if ( pos.y > height + 8 )
-    {
-      pos.y = -8;
-    }
+    // screen wrap
+    int buffer = 2 * r;   
+    if ( pos.x < -r ) { pos.x += width + buffer; }
+    else if ( pos.x > width + r ) { pos.x -= width + buffer; }
+    
+    if ( pos.y < -r ) { pos.y += height + buffer; }
+    else if ( pos.y > height + r ) { pos.y -= height + buffer; }
   }
       
       
@@ -100,6 +98,6 @@ class Blob
     stroke( 2 );
     stroke( cstroke );
     fill( cfill );
-    ellipse( pos.x, pos.y, 8, 8 );
+    ellipse( pos.x, pos.y, r, r );
   }
 }
