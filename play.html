@@ -3,24 +3,34 @@
 
 	<head>
 		<title>Processing Playground</title>
-		<script src="./processing-1.4.8.min.js"></script>
+		
+		<script type="text/javascript" src="./processing-1.4.8.min.js"></script>
+		<script type="text/javascript" src="./play.js"></script>
+
+		<script type="text/javascript">
+		// bind javascript to Processing instance
+			function bindJavascript()
+			{
+				var pjs = document.getElementById("mysketch");
+				try { pjs.bindJavascript(this); }
+				catch(e) { setTimeout(bindJavascript, 250); }
+			}
+			bindJavascript();
+  		</script>
+		
 		<style>
-			canvas {width:500; height:500;}
+			canvas {width:500; height:500; display: block;}
 		</style>
 
 	</head>
 
 	<body>
 		
-		<!-- tags for the javascript approach 
+		<canvas id="mysketch" data-processing-sources="./processes/live_sketch/live_sketch.pde /processes/live_sketch/Blob.pde /processes/live_sketch/Buttons.pde"></canvas>
 
-		<canvas id="mycanv"></canvas>
-		<script src="./random_motion.js"></script>
-
-		-->
-
-		<!-- tags for processing approach -->
-		<canvas data-processing-sources="./processes/live_sketch/live_sketch.pde /processes/live_sketch/Blob.pde"></canvas>
+		<button type="button" onclick="toggleFlock()">Toggle Flocking</button>
+		
+		<button type="button" onclick="toggleTrails()">Toggle Trails</button>
 
 	</body>
 
