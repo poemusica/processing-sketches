@@ -131,9 +131,9 @@ class Blob
     
     if ( ATTRACT )
     {
-      PVector seek = new PVector();
-      seek = seek( new PVector( mouseX, mouseY ) );
-      applyForce( seek );
+      PVector seekForce = new PVector();
+      seekForce = seek( new PVector( mouseX, mouseY ) );
+      applyForce( seekForce );
     }
     
     if ( REPEL )
@@ -142,8 +142,8 @@ class Blob
       float d = pos.dist( scary );
       if ( d < r * LOCAL_RANGE )
       {
-        PVector flee = flee( scary );
-        applyForce( flee );
+        PVector fleeForce = flee( scary );
+        applyForce( fleeForce );
       }
       
     }

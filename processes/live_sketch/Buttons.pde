@@ -26,14 +26,14 @@ void trailClick()
 void attractClick()
 {
   ATTRACT = !ATTRACT;
-  if ( REPEL == true ) { REPEL = false; }
+  if ( REPEL ) { REPEL = false; }
   attractButton.swapColor();
 }
 
 void repelClick()
 {
   REPEL = !REPEL;
-  if ( ATTRACT = true ) { ATTRACT = false; }
+  if ( ATTRACT ) { ATTRACT = false; }
   repelButton.swapColor();
 }
 
