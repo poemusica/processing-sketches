@@ -4,7 +4,7 @@
 function bindJavascript()
 {
 	var pjs = Processing.getInstanceById("mysketch");
-	if (pjs !== null)
+	if (pjs)
 	{
 		try { pjs.bindJavascript(this); }
 		catch(e) { console.log(e); }
