@@ -44,14 +44,6 @@ class Blob
     else if ( pos.y > height + r ) { pos.y -= height + buffer; }
   }
   
-  // Angle change for random motion
-  float angleChange()
-  {
-    float limit = radians( 15 );
-    float newAngle = random( -limit, limit );
-    return newAngle;
-  }
-  
   // Wandering steering.
   PVector wander()
   {
@@ -139,7 +131,6 @@ class Blob
     if ( !flockButton.state )
     {
       //random motion
-      //vel.rotate(  angleChange() );
       PVector wanderForce = wander(); 
       vel.add( wanderForce );  
     } 
@@ -215,9 +206,17 @@ class Blob
   // Draw    
   void draw()
   {
+    float rotation = vel.heading();
     stroke( 2 );
     stroke( cstroke );
     fill( cfill );
-    ellipse( pos.x, pos.y, r, r );
+    
+    pushMatrix();
+    translate( pos.x, pos.y );
+    rotate( rotation );
+    
+    triangle( -r, r/2, r, 0, -r, -r/2 );
+    popMatrix();
+    
   }
 }
