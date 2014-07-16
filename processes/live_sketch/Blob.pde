@@ -58,8 +58,8 @@ class Blob
   PVector wander()
   {
     PVector futurePos = PVector.add( pos, vel );
-    PVector offset = PVector.mult( vel, 3 );
-    float limit = 15;
+    PVector offset = vel.get();
+    float limit = 20;
     offset.rotate( radians( random( -limit, limit ) ) );
     PVector target =  PVector.add( pos, offset );
     
@@ -67,7 +67,6 @@ class Blob
     desired.setMag(maxSpeed);
     
     PVector steer = PVector.sub( desired, vel );
-    steer.limit(1);
     return steer;
   }
   
