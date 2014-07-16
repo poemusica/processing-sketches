@@ -20,13 +20,12 @@ void setup()
     Blob b = new Blob( x, y );
     blobs[ i ] = b;
   }
-
 }
 
 // Main draw loop
 void draw()
 {
-  if ( !TRAIL ) { background( 0xFF33FFCC ); }
+  if ( !trailButton.state ) { background( 0xFF33FFCC ); }
     
   // If javascript is not bound, draw buttons in processing.
   // Provides one second delay for binding.

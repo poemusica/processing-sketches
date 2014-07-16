@@ -1,6 +1,6 @@
 // Globals
 
-Blob[] blobs = new Blob[ 2 ];
+Blob[] blobs = new Blob[ 80 ];
 
 static float LOCAL_RANGE = 10; // multiplied by r
 static float ALI_STRENGTH = 0.5;
@@ -55,23 +55,16 @@ class Blob
   // Wandering steering
   PVector wander()
   {
-    PVector centerP = PVector.add( pos, vel );
-    float centerR = 5;
-    
-    stroke( 2 );
-    stroke( cstroke );
-    fill( cfill );
-    ellipse( centerP.x, centerP.y, centerR , centerR );
-    
-    PVector offset = new PVector();
-    offset.setMag( centerR );
-    offset.rotate( radians( random( -360, 360 ) ) );
-    PVector target = PVector.add( centerP, offset );
+    PVector futurePos = PVector.add( pos, vel );
+    PVector offset = PVector.mult( vel, 3 );
+    offset.rotate( radians( random( 1, 360 ) ) );
+    PVector target =  PVector.add( pos, offset );
     
     PVector desired = PVector.sub( target, pos );
     desired.setMag(maxSpeed);
+    
     PVector steer = PVector.sub( desired, vel );
-    steer.limit( 2 );
+    steer.limit(1);
     return steer;
   }
   
@@ -142,14 +135,15 @@ class Blob
   // Update
   void update()
   {
-    if ( !FLOCKING )
+    if ( !flockButton.state )
     {
       //random motion
       //vel.rotate(  angleChange() );
-      applyForce( wander() );  
+      PVector wanderForce = wander(); 
+      vel.add( wanderForce );  
     } 
    
-    if ( FLOCKING )
+    if ( flockButton.state )
     {
       // flocking
       
@@ -185,14 +179,14 @@ class Blob
       applyForce( ali );
     }
     
-    if ( ATTRACT )
+    if ( attractButton.state )
     {
       PVector seekForce = new PVector();
       seekForce = arrive( new PVector( mouseX, mouseY ) );
       applyForce( seekForce );
     }
     
-    if ( REPEL )
+    if ( repelButton.state )
     {
       PVector scary = new PVector( mouseX, mouseY );
       float d = pos.dist( scary );
@@ -207,7 +201,11 @@ class Blob
     vel.add( acc );
     vel.limit( maxSpeed );
     pos.add( vel );
-    acc.mult(0);
+    acc.mult( 0 );
+    
+    // debugging
+    if ( this == blobs[ 0 ] ) 
+      { println( pos, vel, flockButton.state ); }
     
     // screen wrap
     checkEdges();

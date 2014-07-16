@@ -1,14 +1,9 @@
 // Globals
 
-boolean FLOCKING = true;
-boolean TRAIL = false;
-boolean ATTRACT = false;
-boolean REPEL = false;
-
-Button flockButton = new Button( new PVector( 10 , height + 5 ), 105, 35, "Toggle Flocking");
-Button trailButton = new Button( new PVector( 120, height + 5 ), 105, 35, "Toggle Trails" );
-Button attractButton = new Button( new PVector( 230, height + 5 ), 105, 35, "Toggle Attract" );
-Button repelButton = new Button( new PVector( 340, height + 5 ), 105, 35, "Toggle Repel" );
+Button flockButton = new Button( new PVector( 10 , height + 5 ), 105, 35, "Toggle Flocking", true );
+Button trailButton = new Button( new PVector( 120, height + 5 ), 105, 35, "Toggle Trails", false );
+Button attractButton = new Button( new PVector( 230, height + 5 ), 105, 35, "Toggle Attract", false );
+Button repelButton = new Button( new PVector( 340, height + 5 ), 105, 35, "Toggle Repel", false );
 
 // Defines Button class
 class Button
@@ -17,14 +12,15 @@ class Button
   PVector pos;
   color cstroke, cfill;
   String label;
+  boolean state;
   
-  Button ( PVector p, float w, float h, String s )
+  Button ( PVector p, float w, float h, String l, boolean s)
   {
     bwidth = w;
     bheight = h;
     pos = p;
-    label = s;
-    
+    label = l;
+    state = s;
     cstroke = randomColor();
     cfill = randomColor();
   }
@@ -58,50 +54,42 @@ class Button
 void mouseClicked( MouseEvent e )
 {
   if ( flockButton.contains( e.getX(), e.getY() ) )
-  {  
-    flockClick();
-  }
+  {  flockClick(); }
   
   if ( trailButton.contains( e.getX(), e.getY() ) )
-  {
-    trailClick();
-  }
+  { trailClick(); }
   
   if ( attractButton.contains( e.getX(), e.getY() ) )
-  {
-    attractClick();
-  }
+  { attractClick(); }
   
   if ( repelButton.contains( e.getX(), e.getY() ) )
-  {
-    repelClick();
-  }
-  
+  { repelClick(); }
 }
 
 // Javascript Helpers (must be top-level functions)
 void flockClick()
 {
-  FLOCKING = !FLOCKING;
+  flockButton.state = !flockButton.state;
   flockButton.swapColor();
 }
 
 void trailClick()
 {
-  TRAIL = !TRAIL;
+  trailButton.state = !trailButton.state;
   trailButton.swapColor();
 }
 
 void attractClick()
 {
-  ATTRACT = !ATTRACT;
-  if ( REPEL ) { REPEL = false; repelButton.swapColor(); }
+  attractButton.state = !attractButton.state;
+  if ( repelButton.state ) { repelButton.state = false; repelButton.swapColor(); }
   attractButton.swapColor();
 }
 
 void repelClick()
 {
-  REPEL = !REPEL;
-  if ( ATTRACT ) { ATTRACT = false; attractButton.swapColor(); }
+  boolean status = repelButton.state;
+  repelButton.state = !repelButton.state;
+  if ( attractButton.state ) { attractButton.state = false; attractButton.swapColor(); }
   repelButton.swapColor();
 }
