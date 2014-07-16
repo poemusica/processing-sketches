@@ -10,33 +10,6 @@ Button trailButton = new Button( new PVector( 120, height + 5 ), 105, 35, "Toggl
 Button attractButton = new Button( new PVector( 230, height + 5 ), 105, 35, "Toggle Attract" );
 Button repelButton = new Button( new PVector( 340, height + 5 ), 105, 35, "Toggle Repel" );
 
-// Javascript Helpers
-void flockClick()
-{
-  FLOCKING = !FLOCKING;
-  flockButton.swapColor();
-}
-
-void trailClick()
-{
-  TRAIL = !TRAIL;
-  trailButton.swapColor();
-}
-
-void attractClick()
-{
-  ATTRACT = !ATTRACT;
-  if ( REPEL ) { REPEL = false; }
-  attractButton.swapColor();
-}
-
-void repelClick()
-{
-  REPEL = !REPEL;
-  if ( ATTRACT ) { ATTRACT = false; }
-  repelButton.swapColor();
-}
-
 // Defines Button class
 class Button
 {
@@ -78,4 +51,57 @@ class Button
     cfill = cstroke;
     cstroke = f;
   }
+}
+
+
+// Mouse clicks
+void mouseClicked( MouseEvent e )
+{
+  if ( flockButton.contains( e.getX(), e.getY() ) )
+  {  
+    flockClick();
+  }
+  
+  if ( trailButton.contains( e.getX(), e.getY() ) )
+  {
+    trailClick();
+  }
+  
+  if ( attractButton.contains( e.getX(), e.getY() ) )
+  {
+    attractClick();
+  }
+  
+  if ( repelButton.contains( e.getX(), e.getY() ) )
+  {
+    repelClick();
+  }
+  
+}
+
+// Javascript Helpers (must be top-level functions)
+void flockClick()
+{
+  FLOCKING = !FLOCKING;
+  flockButton.swapColor();
+}
+
+void trailClick()
+{
+  TRAIL = !TRAIL;
+  trailButton.swapColor();
+}
+
+void attractClick()
+{
+  ATTRACT = !ATTRACT;
+  if ( REPEL ) { REPEL = false; repelButton.swapColor(); }
+  attractButton.swapColor();
+}
+
+void repelClick()
+{
+  REPEL = !REPEL;
+  if ( ATTRACT ) { ATTRACT = false; attractButton.swapColor(); }
+  repelButton.swapColor();
 }

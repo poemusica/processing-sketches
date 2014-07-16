@@ -12,6 +12,7 @@ void setup()
   smooth();
   frameRate( 30 );
   
+  // make blobs
   for ( int i = 0; i < blobs.length; i++ ) 
   {
     float x = random( width );
@@ -25,17 +26,8 @@ void setup()
 // Main draw loop
 void draw()
 {
-  if ( !TRAIL )
-  { 
-    background( 0xFF33FFCC ); 
-  }
-  
-  for ( Blob b : blobs )
-  {
-    b.update();
-    b.draw();
-  }
-  
+  if ( !TRAIL ) { background( 0xFF33FFCC ); }
+    
   // If javascript is not bound, draw buttons in processing.
   // Provides one second delay for binding.
   if ( javascript == null && frameCount > 30 )
@@ -45,34 +37,14 @@ void draw()
     attractButton.draw();
     repelButton.draw();
   }
+  
+  for ( Blob b : blobs )
+  {
+    b.update();
+    b.draw();
+  }
 
 }
-
-// Mouse 
-void mouseClicked( MouseEvent e )
-{
-  if ( flockButton.contains( e.getX(), e.getY() ) )
-  {  
-    flockClick();
-  }
-  
-  if ( trailButton.contains( e.getX(), e.getY() ) )
-  {
-    trailClick();
-  }
-  
-  if ( attractButton.contains( e.getX(), e.getY() ) )
-  {
-    attractClick();
-  }
-  
-  if ( repelButton.contains( e.getX(), e.getY() ) )
-  {
-    repelClick();
-  }
-  
-}
-
 
 // UTILITIES //
 

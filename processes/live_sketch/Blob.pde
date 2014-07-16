@@ -1,12 +1,12 @@
 // Globals
 
-Blob[] blobs = new Blob[ 80 ];
+Blob[] blobs = new Blob[ 2 ];
 
 static float LOCAL_RANGE = 10; // multiplied by r
-static float ALI_STRENGTH = 1;
+static float ALI_STRENGTH = 0.5;
 static float COH_STRENGTH = 1;
 static float SEP_STRENGTH = 3;
-static float SEP_IDEAL = 16;
+static float SEP_IDEAL = 18;
 static float SWARM_STRENGTH = 2;
 static float SCATTER_STRENGTH = 2;
 
@@ -16,26 +16,63 @@ class Blob
   // Instance variables
   PVector pos, vel, acc;
   color cstroke, cfill;
-  int r = 8, maxSpeed = 5, maxForce;
+  float r; // radius of shape. can also be used as a visualizer for mass. 
+  float maxSpeed = 5, maxForce;
   
   // Constructor
   Blob ( float x, float y ) 
   {
     pos = new PVector( x, y );
-    vel = PVector.random2D();
-    vel.setMag( 1.275 );
+    vel = PVector.random2D(); // creates a PVector of length 1 pointing in a random direction.
+    vel.setMag( random( 6, 12 ) / 100 );
     acc = new PVector( 0, 0 );
+    //r = random(5, 15);
+    r = 8;
     
     cstroke = randomColor();
     cfill = randomColor();
+  }
+  
+  // Check edges & screen wrap
+  void checkEdges()
+  {
+    float buffer = 2 * r;   
+    if ( pos.x < -r ) { pos.x += width + buffer; }
+    else if ( pos.x > width + r ) { pos.x -= width + buffer; }
+    
+    if ( pos.y < -r ) { pos.y += height + buffer; }
+    else if ( pos.y > height + r ) { pos.y -= height + buffer; }
   }
   
   // Angle change for random motion
   float angleChange()
   {
     float limit = radians( 15 );
-    float magic = random( -limit, limit );
-    return magic;
+    float newAngle = random( -limit, limit );
+    return newAngle;
+  }
+  
+  // Wandering steering
+  PVector wander()
+  {
+    PVector centerP = PVector.add( pos, vel );
+    float centerR = 5;
+    
+    stroke( 2 );
+    stroke( cstroke );
+    fill( cfill );
+    ellipse( centerP.x, centerP.y, centerR , centerR );
+    
+    PVector offset = new PVector();
+    offset.setMag( centerR );
+    offset.rotate( radians( random( -360, 360 ) ) );
+    PVector target = PVector.add( centerP, offset );
+    
+    PVector desired = PVector.sub( target, pos );
+    desired.setMag(maxSpeed);
+    PVector steer = PVector.sub( desired, vel );
+    steer.limit( 2 );
+    return steer;
   }
   
   // Apply force to acceleration
@@ -43,7 +80,7 @@ class Blob
   {
     acc.add( force );
   }
-  
+    
   // Separation steering
   PVector separate( float d, PVector other)
   {
@@ -64,12 +101,30 @@ class Blob
     return steer;
   }
   
+  // Arrival steering
+  PVector arrive(PVector target )
+  {
+    PVector desired = PVector.sub( target, pos );
+    
+    float d = desired.mag();
+    if ( d < 100 )
+    {
+      float m = map( d, 0, 100, 0, maxSpeed );
+      desired.setMag( m );
+    }
+    else { desired.setMag( maxSpeed ); }
+      
+    PVector steer = PVector.sub( desired, vel );
+    steer.limit( SWARM_STRENGTH );
+    return steer;
+  }
+    
   // Attraction steering
   PVector seek(PVector target)
   {
     PVector desired = PVector.sub( target, pos );
     desired.setMag( maxSpeed );
-    PVector steer = PVector.sub( desired, vel);
+    PVector steer = PVector.sub( desired, vel );
     steer.limit( SWARM_STRENGTH );
     return steer;
   }
@@ -90,7 +145,8 @@ class Blob
     if ( !FLOCKING )
     {
       //random motion
-      vel.rotate(  angleChange() );  
+      //vel.rotate(  angleChange() );
+      applyForce( wander() );  
     } 
    
     if ( FLOCKING )
@@ -132,7 +188,7 @@ class Blob
     if ( ATTRACT )
     {
       PVector seekForce = new PVector();
-      seekForce = seek( new PVector( mouseX, mouseY ) );
+      seekForce = arrive( new PVector( mouseX, mouseY ) );
       applyForce( seekForce );
     }
     
@@ -154,12 +210,7 @@ class Blob
     acc.mult(0);
     
     // screen wrap
-    int buffer = 2 * r;   
-    if ( pos.x < -r ) { pos.x += width + buffer; }
-    else if ( pos.x > width + r ) { pos.x -= width + buffer; }
-    
-    if ( pos.y < -r ) { pos.y += height + buffer; }
-    else if ( pos.y > height + r ) { pos.y -= height + buffer; }
+    checkEdges();
   }
       
   // Draw    
