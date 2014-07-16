@@ -57,7 +57,6 @@ class Blob
   // At least it is consistent though.
   PVector wander()
   {
-    PVector futurePos = PVector.add( pos, vel );
     PVector offset = vel.get();
     float limit = 20;
     offset.rotate( radians( random( -limit, limit ) ) );
