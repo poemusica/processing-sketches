@@ -52,20 +52,20 @@ class Blob
     return newAngle;
   }
   
-  // Wandering steering
-  // I think this is just a more round-about way of doing what we were already doing...
-  // At least it is consistent though.
+  // Wandering steering.
   PVector wander()
   {
+    PVector futpos = PVector.add( pos, vel );
     PVector offset = vel.get();
-    float limit = 20;
-    offset.rotate( radians( random( -limit, limit ) ) );
-    PVector target =  PVector.add( pos, offset );
+    offset.div( 3 );
+    offset.rotate( radians( random( 0, 360 ) ) );
+    PVector target = PVector.add( futpos, offset );
     
     PVector desired = PVector.sub( target, pos );
-    desired.setMag(maxSpeed);
+    desired.setMag( maxSpeed );
     
     PVector steer = PVector.sub( desired, vel );
+    steer.limit( 2 );
     return steer;
   }
   
