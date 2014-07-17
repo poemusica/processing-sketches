@@ -74,15 +74,15 @@ class Blob
       count++;
     }
     
+    PVector steer = new PVector( 0, 0 );
     if ( count > 0 ) 
     { 
       desired.div( count );
       desired.limit( maxSpeed );
-      PVector steer = PVector.sub( desired, vel );
+      steer = PVector.sub( desired, vel );
       steer.limit( maxForce );
-      return steer;
     }
-      return desired;
+      return steer;
   }
   
   // screen wrap
@@ -125,7 +125,7 @@ class Blob
   PVector separate()
   {
     int near = 0;
-    PVector sum = new PVector( 0 , 0 );
+    PVector desired = new PVector( 0 , 0 );
     for ( Blob b : blobs )
     {
       if ( b == this ) { continue; }
@@ -136,26 +136,27 @@ class Blob
       { 
         PVector diff = PVector.sub( pos, b.pos ); 
         diff.div( d );
-        sum.add( diff );
+        desired.add( diff );
         near++;
       }  
     }
+    
+    PVector steer = new PVector( 0, 0 );
     if ( near > 0 )
     {
-      sum.div( near ); 
-      sum.setMag( maxSpeed );
+      desired.div( near ); 
+      desired.setMag( maxSpeed );
+      steer = PVector.sub( desired, vel ); 
+      steer.limit( maxForce );   
     }
-     
-    PVector steer = PVector.sub( sum, vel ); 
-    steer.limit( maxForce );
-    return steer;   
+     return steer;
   }
   
   // Cohesion steering
   PVector cohere()
   {
     int local = 0;
-    PVector sum = new PVector( 0, 0 );
+    PVector desired = new PVector( 0, 0 );
     for ( Blob b : blobs )
     {
       if ( b == this ) { continue; }
@@ -164,7 +165,7 @@ class Blob
       
       if ( d > PROX_MIN )
       {
-        sum.add( b.pos );
+        desired.add( b.pos );
         local++;
       }
      }
@@ -172,12 +173,12 @@ class Blob
      PVector steer = new PVector( 0, 0 );
      if ( local > 0 )
      {
-       sum.div( local );
-       //PVector desired = PVector.sub( sum, pos );
+       desired.div( local );
+       //PVector desired = PVector.sub( target, pos );
        //desired.setMag( maxSpeed );
        //steer = PVector.sub( desired, vel );
        //steer.limit( COH_STRENGTH );
-       steer = seek( sum );
+       steer = seek( desired );
      }
      return steer;
   }
@@ -186,7 +187,7 @@ class Blob
   PVector align()
   {
     int local = 0;
-    PVector sum = new PVector( 0, 0 );
+    PVector desired = new PVector( 0, 0 );
     for ( Blob b : blobs )
     {
       if ( b == this ) { continue; }
@@ -194,36 +195,39 @@ class Blob
       float d = pos.dist( b.pos );
       if ( d > LOCAL_RANGE ) { continue; }
      
-      sum.add( b.vel );
+      desired.add( b.vel );
       local++;
      }
      
+     PVector steer = new PVector( 0, 0 );
      if ( local > 0 )
      {
-       sum.div( local );
-       sum.setMag( maxSpeed );
+       desired.div( local );
+       desired.setMag( maxSpeed );
+       steer = PVector.sub( desired, vel );
+       steer.limit( maxForce );
      }
-     
-     PVector steer = PVector.sub( sum, vel ); 
-     steer.limit( maxForce );
      return steer;       
   }
   
   // Arrival steering
   PVector arrive(PVector target )
   {
-    PVector desired = PVector.sub( target, pos );
-    
-    float d = desired.mag();
-    if ( d < 100 )
+    PVector steer = new PVector( 0, 0 );
+    float d = pos.dist( target );
+    if ( d < LOCAL_RANGE )
     {
-      float m = map( d, 0, 100, 0, maxSpeed );
-      desired.setMag( m );
+      PVector desired = PVector.sub( target, pos );
+      float dm = desired.mag();
+      if ( dm < LOCAL_RANGE / 2 )
+      {
+        float m = map( dm, 0, LOCAL_RANGE / 2, 0, maxSpeed );
+        desired.setMag( m );
+      }
+      else { desired.setMag( maxSpeed ); }
+      steer = PVector.sub( desired, vel );
+      steer.limit( SWARM_STRENGTH );  
     }
-    else { desired.setMag( maxSpeed ); }
-      
-    PVector steer = PVector.sub( desired, vel );
-    steer.limit( SWARM_STRENGTH );
     return steer;
   }
     
@@ -232,7 +236,7 @@ class Blob
   {
     PVector steer = new PVector( 0, 0 );
     float d = pos.dist( target );
-    if ( d <= LOCAL_RANGE )
+    if ( d < LOCAL_RANGE )
     {
       PVector desired = PVector.sub( target, pos );
       desired.setMag( maxSpeed );
@@ -275,7 +279,7 @@ class Blob
     if ( attractButton.state )
     {
       PVector target = new PVector( mouseX, mouseY );
-      applyForce( seek( target ) );
+      applyForce( arrive( target ) );
     }
     
     // aversion
