@@ -38,32 +38,43 @@ class Blob
   // solid walls
   PVector checkWall()
   {
-    float buffer = 5;
+    float buffer = 20;
+    int count = 0;
     PVector desired = new PVector( 0, 0 );
     if ( pos.x < buffer )
     { 
-      desired = new PVector( maxSpeed, vel.y );
+      PVector dx = new PVector( maxSpeed, vel.y );
       float m = map( buffer - pos.x, 0, buffer, 0, 1 );
-      desired.mult( m );
+      dx.mult( m );
+      desired.add( dx );
+      count++;
     }
     else if ( pos.x > width - buffer ) 
     {
-      desired = new PVector( -maxSpeed, vel.y );
+      PVector dx = new PVector( -maxSpeed, vel.y );
       float m = map( pos.x, width + buffer, width, 0, 1 );
-      desired.mult( m );
+      dx.mult( m );
+      desired.add( dx );
+      count++;
     }
     if ( pos.y < buffer )
     {
-      desired = new PVector( vel.x, maxSpeed );
+      PVector dy = new PVector( vel.x, maxSpeed );
       float m = map( buffer - pos.y, 0, buffer, 0, 1 );
-      desired.mult( m );
+      dy.mult( m );
+      desired.add( dy );
+      count++;
     }
     else if ( pos.y > height - buffer )
     {
-      desired = new PVector( vel.x, -maxSpeed );
+      PVector dy = new PVector( vel.x, -maxSpeed );
       float m = map( pos.y, height + buffer, height, 0, 1 );
-      desired.mult( m );
+      dy.mult( m );
+      desired.add( dy );
+      count++;
     }
+    
+    if ( count > 1 ) { desired.div( count ); }
     
     PVector steer = PVector.sub( desired, vel );
     steer.limit( maxForce );
