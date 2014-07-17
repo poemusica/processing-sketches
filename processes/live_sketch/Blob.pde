@@ -38,12 +38,32 @@ class Blob
   // solid walls
   PVector checkWall()
   {
-    float buffer = 20;
+    float buffer = 5;
     PVector desired = new PVector( 0, 0 );
-    if ( pos.x < buffer ) { desired = new PVector( maxSpeed, vel.y ); }
-    else if ( pos.x > width - buffer ) { desired = new PVector( -maxSpeed, vel.y ); }
-    if ( pos.y < buffer ) { desired = new PVector( vel.x, maxSpeed ); }
-    else if ( pos.y > height - buffer ) { desired = new PVector( vel.x, -maxSpeed ); }
+    if ( pos.x < buffer )
+    { 
+      desired = new PVector( maxSpeed, vel.y );
+      float m = map( buffer - pos.x, 0, buffer, 0, 1 );
+      desired.mult( m );
+    }
+    else if ( pos.x > width - buffer ) 
+    {
+      desired = new PVector( -maxSpeed, vel.y );
+      float m = map( pos.x, width + buffer, width, 0, 1 );
+      desired.mult( m );
+    }
+    if ( pos.y < buffer )
+    {
+      desired = new PVector( vel.x, maxSpeed );
+      float m = map( buffer - pos.y, 0, buffer, 0, 1 );
+      desired.mult( m );
+    }
+    else if ( pos.y > height - buffer )
+    {
+      desired = new PVector( vel.x, -maxSpeed );
+      float m = map( pos.y, height + buffer, height, 0, 1 );
+      desired.mult( m );
+    }
     
     PVector steer = PVector.sub( desired, vel );
     steer.limit( maxForce );
