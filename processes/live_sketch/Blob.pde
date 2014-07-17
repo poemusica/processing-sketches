@@ -1,12 +1,13 @@
 // Globals
 
-Blob[] blobs = new Blob[ 80 ];
+Blob[] blobs = new Blob[ 40 ];
 
-static float LOCAL_RANGE = 10; // multiplied by r
+static float LOCAL_RANGE = 32; // multiplied by r
+static float WANDER_STRENGTH = 1;
 static float ALI_STRENGTH = 0.5;
-static float COH_STRENGTH = 1;
-static float SEP_STRENGTH = 3;
-static float SEP_IDEAL = 18;
+static float COH_STRENGTH = 0.5;
+static float SEP_STRENGTH = 1.5;
+static float PROX_IDEAL = 16;
 static float SWARM_STRENGTH = 2;
 static float SCATTER_STRENGTH = 2;
 
@@ -24,7 +25,7 @@ class Blob
   {
     pos = new PVector( x, y );
     vel = PVector.random2D(); // creates a PVector of length 1 pointing in a random direction.
-    vel.setMag( random( 6, 12 ) / 100 );
+    vel.setMag( 1.25 );
     acc = new PVector( 0, 0 );
     //r = random(5, 15);
     r = 8;
@@ -43,7 +44,13 @@ class Blob
     if ( pos.y < -r ) { pos.y += height + buffer; }
     else if ( pos.y > height + r ) { pos.y -= height + buffer; }
   }
-  
+    
+  // Apply force to acceleration
+  void applyForce( PVector force)
+  {
+    acc.add( force );
+  }
+    
   // Wandering steering.
   PVector wander()
   {
@@ -57,34 +64,95 @@ class Blob
     desired.setMag( maxSpeed );
     
     PVector steer = PVector.sub( desired, vel );
-    steer.limit( 2 );
+    steer.limit( WANDER_STRENGTH );
     return steer;
-  }
-  
-  // Apply force to acceleration
-  void applyForce( PVector force)
-  {
-    acc.add( force );
   }
     
   // Separation steering
-  PVector separate( float d, PVector other)
+  PVector separate()
   {
-    PVector steer = new PVector( 0, 0 );
-    if ( d < SEP_IDEAL )
+    int near = 0;
+    PVector sum = new PVector( 0 , 0 );
+    for ( Blob b : blobs )
     {
-      steer = PVector.sub( pos, other );
+      if ( b == this ) { continue; }
+      
+      float d = PVector.dist( pos, b.pos );
+      
+      if ( d < PROX_IDEAL )
+      { 
+        PVector diff = PVector.sub( pos, b.pos ); 
+        diff.div( d );
+        sum.add( diff );
+        near++;
+      }  
     }
-    return steer;
+    if ( near > 0 )
+    {
+      sum.div( near ); 
+      sum.setMag( maxSpeed );
+    }
+     
+    PVector steer = PVector.sub( sum, vel ); 
+    steer.limit( SEP_STRENGTH );
+    return steer;   
   }
   
   // Cohesion steering
-  PVector cohere( float d, PVector other)
+  PVector cohere()
   {
-    PVector steer = PVector.sub( other, pos );
-    steer.normalize();
-    steer.div( sq( d ) );
-    return steer;
+    int local = 0;
+    PVector sum = new PVector( 0, 0 );
+    for ( Blob b : blobs )
+    {
+      if ( b == this ) { continue; }
+      
+      float d = pos.dist( b.pos );
+      if ( d > r * LOCAL_RANGE ) { continue; }
+      
+      if ( d > PROX_IDEAL )
+      {
+        sum.add( PVector.sub( b.pos, pos ) );
+        local++;
+      }
+     }
+     
+     if ( local > 0 )
+     {
+       sum.div( local );
+       sum.setMag( maxSpeed );
+     }  
+     
+     PVector steer = PVector.sub( sum, vel ); 
+     steer.limit( COH_STRENGTH );
+     return steer;       
+  }
+  
+  // Alignment steering
+  PVector align()
+  {
+    int local = 0;
+    PVector sum = new PVector( 0, 0 );
+    for ( Blob b : blobs )
+    {
+      if ( b == this ) { continue; }
+      
+      float d = pos.dist( b.pos );
+      if ( d > r * LOCAL_RANGE ) { continue; }
+     
+      sum.add( b.vel );
+      local++;
+     }
+     
+     if ( local > 0 )
+     {
+       sum.div( local );
+       sum.setMag( maxSpeed );
+     }
+     
+     PVector steer = PVector.sub( sum, vel ); 
+     steer.limit( ALI_STRENGTH );
+     return steer;       
   }
   
   // Arrival steering
@@ -108,88 +176,62 @@ class Blob
   // Attraction steering
   PVector seek(PVector target)
   {
-    PVector desired = PVector.sub( target, pos );
-    desired.setMag( maxSpeed );
-    PVector steer = PVector.sub( desired, vel );
-    steer.limit( SWARM_STRENGTH );
+    PVector steer = new PVector( 0, 0 );
+    float d = pos.dist( target );
+    if ( d < r * LOCAL_RANGE )
+    {
+      PVector desired = PVector.sub( target, pos );
+      desired.setMag( maxSpeed );
+      steer = PVector.sub( desired, vel );
+      steer.limit( SWARM_STRENGTH );
+    }
     return steer;
   }
   
   // Aversion steering
   PVector flee(PVector target)
   {
-    PVector desired = PVector.sub( pos, target );
-    desired.setMag( maxSpeed );
-    PVector steer = PVector.sub( desired, vel);
-    steer.limit( SCATTER_STRENGTH );
+    PVector steer = new PVector( 0, 0 );
+    float d = pos.dist( target );
+    if ( d < r * LOCAL_RANGE )
+    {
+      PVector desired = PVector.sub( pos, target );
+      desired.setMag( maxSpeed );
+      steer = PVector.sub( desired, vel);
+      steer.limit( SCATTER_STRENGTH );
+    }
     return steer;
   }
   
   // Update
   void update()
   {
-    if ( !flockButton.state )
-    {
-      //random motion
-      PVector wanderForce = wander(); 
-      vel.add( wanderForce );  
-    } 
-   
+    //random motion
+    applyForce( wander() );
+    
+    // flocking
     if ( flockButton.state )
     {
-      // flocking
-      
-      PVector coh = new PVector( 0, 0 );
-      PVector sep = new PVector( 0, 0 );
-      PVector ali = new PVector( 0, 0 );
-      float n = blobs.length;
-      
-      // accumulate each force
-      for ( Blob b : blobs )
-      {
-        if ( b == this ) { continue; }
-        
-        float d = pos.dist( b.pos );
-        if ( d > r * LOCAL_RANGE ) { continue; }
-        
-        coh.add( cohere( d, b.pos ) );
-        
-        sep.add( separate( d, b.pos ) );
-        
-        ali.add( b.vel );
-      }
-      
-      // scale each force
-      coh.setMag( COH_STRENGTH );
-      applyForce( coh );
-      
-      sep.setMag( SEP_STRENGTH );
-      applyForce( sep );
-      
-      ali.div( n - 1 );
-      ali.setMag( ALI_STRENGTH );
-      applyForce( ali );
+      applyForce( cohere() );
+      applyForce( separate() );
+      applyForce( align() );
     }
     
+    // attraction
     if ( attractButton.state )
     {
-      PVector seekForce = new PVector();
-      seekForce = arrive( new PVector( mouseX, mouseY ) );
-      applyForce( seekForce );
+      PVector target = new PVector( mouseX, mouseY );
+      applyForce( seek( target ) );
     }
     
+    // aversion
     if ( repelButton.state )
     {
-      PVector scary = new PVector( mouseX, mouseY );
-      float d = pos.dist( scary );
-      if ( d < r * LOCAL_RANGE )
-      {
-        PVector fleeForce = flee( scary );
-        applyForce( fleeForce );
-      }
-      
+      PVector target = new PVector( mouseX, mouseY );
+      applyForce( flee( target ) );
     }
     
+    // velocity and position change
     vel.add( acc );
     vel.limit( maxSpeed );
     pos.add( vel );
