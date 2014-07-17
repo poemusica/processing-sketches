@@ -9,8 +9,6 @@ static float COH_STRENGTH = 0.5;
 static float SEP_STRENGTH = 0.5;
 static float PROX_MIN = 40;
 static float PROX_MAX = 24;
-static float SWARM_STRENGTH = 2;
-static float SCATTER_STRENGTH = 2;
 
 // Defines Blob class
 class Blob
@@ -117,14 +115,14 @@ class Blob
     desired.setMag( maxSpeed );
     
     PVector steer = PVector.sub( desired, vel );
-    steer.limit( WANDER_STRENGTH );
+    steer.limit( maxForce );
     return steer;
   }
     
   // Separation steering
   PVector separate()
   {
-    int near = 0;
+    int tooNear = 0;
     PVector desired = new PVector( 0 , 0 );
     for ( Blob b : blobs )
     {
@@ -137,14 +135,14 @@ class Blob
         PVector diff = PVector.sub( pos, b.pos ); 
         diff.div( d );
         desired.add( diff );
-        near++;
+        tooNear++;
       }  
     }
     
     PVector steer = new PVector( 0, 0 );
-    if ( near > 0 )
+    if ( tooNear > 0 )
     {
-      desired.div( near ); 
+      desired.div( tooNear ); 
       desired.setMag( maxSpeed );
       steer = PVector.sub( desired, vel ); 
       steer.limit( maxForce );   
@@ -155,7 +153,7 @@ class Blob
   // Cohesion steering
   PVector cohere()
   {
-    int local = 0;
+    int tooFar = 0;
     PVector desired = new PVector( 0, 0 );
     for ( Blob b : blobs )
     {
@@ -163,22 +161,23 @@ class Blob
       
       float d = pos.dist( b.pos );
       
-      if ( d > PROX_MIN )
+      if ( d < LOCAL_RANGE && d > PROX_MIN  )
       {
-        desired.add( b.pos );
-        local++;
+        PVector diff = PVector.sub( b.pos, pos );
+        diff.mult( d );
+        desired.add( diff );
+        tooFar++;
       }
      }
      
      PVector steer = new PVector( 0, 0 );
-     if ( local > 0 )
+     if ( tooFar > 0 )
      {
-       desired.div( local );
-       //PVector desired = PVector.sub( target, pos );
-       //desired.setMag( maxSpeed );
-       //steer = PVector.sub( desired, vel );
-       //steer.limit( COH_STRENGTH );
-       steer = seek( desired );
+       desired.div( tooFar );
+       desired.setMag( maxSpeed );
+       steer = PVector.sub( desired, vel );
+       steer.limit( maxForce );
+       //steer = seek( desired );
      }
      return steer;
   }
@@ -226,7 +225,7 @@ class Blob
       }
       else { desired.setMag( maxSpeed ); }
       steer = PVector.sub( desired, vel );
-      steer.limit( SWARM_STRENGTH );  
+      steer.limit( maxForce );  
     }
     return steer;
   }
@@ -256,7 +255,7 @@ class Blob
       PVector desired = PVector.sub( pos, target );
       desired.setMag( maxSpeed );
       steer = PVector.sub( desired, vel);
-      steer.limit( SCATTER_STRENGTH );
+      steer.limit( maxForce );
     }
     return steer;
   }
@@ -265,7 +264,7 @@ class Blob
   void update()
   {
     //random motion
-    applyForce( wander() );
+    applyForce( PVector.mult( wander(), WANDER_STRENGTH ) );
     
     // flocking
     if ( flockButton.state )
@@ -279,14 +278,14 @@ class Blob
     if ( attractButton.state )
     {
       PVector target = new PVector( mouseX, mouseY );
-      applyForce( arrive( target ) );
+      applyForce( PVector.mult( arrive( target ), COH_STRENGTH ) );
     }
     
     // aversion
     if ( repelButton.state )
     {
       PVector target = new PVector( mouseX, mouseY );
-      applyForce( flee( target ) );
+      applyForce( PVector.mult( flee( target ), SEP_STRENGTH ) );
     }
     
     if ( wallButton.state )
@@ -299,8 +298,7 @@ class Blob
     acc.mult( 0 );
     
     // debugging
-    //if ( this == blobs[ 0 ] ) 
-      //{ println( pos, vel, flockButton.state ); }
+    //if ( this == blobs[ 0 ] ) { println( pos, vel, flockButton.state ); }
     
     // screen wrap
     if ( !wallButton.state )
