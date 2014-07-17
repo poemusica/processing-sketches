@@ -10,7 +10,7 @@ void setup()
 {
   size( 800, 500 );
   smooth();
-  frameRate( 60 );
+  frameRate( 30 );
   
   // make blobs
   for ( int i = 0; i < blobs.length; i++ ) 

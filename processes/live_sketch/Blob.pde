@@ -2,19 +2,23 @@
 
 Blob[] blobs = new Blob[ 80 ];
 
-static float LOCAL_RANGE = 64;
-static float WANDER_STRENGTH = 0;
-static float ALI_STRENGTH = 0.5;
+static float LOCAL_RANGE = 60;
+static float WANDER_STRENGTH = 1;
+static float ALI_STRENGTH = 1;
 static float COH_STRENGTH = 1;
-static float SEP_STRENGTH = 1;
-static float PROX_MIN = 15;
-static float PROX_MAX = 55;
+static float SEP_STRENGTH = 1.5;
+
+static float SEEK_STRENGTH = COH_STRENGTH * 1.75;
+static float FLEE_STRENGTH = SEP_STRENGTH * 1.75;
+
+static float PROX_MIN =  30;
+static float PROX_MAX = 45;
 
 // Defines Blob class
 class Blob
 {  
   PVector pos, vel, acc;
-  float maxSpeed = 3, maxForce = 1;
+  float maxSpeed = 5, maxForce = 0.5;
   float wanderAngle = random( 1, 360 );
   color cstroke, cfill;
   float r; // radius of shape. can also be used as a visualizer for mass. 
@@ -279,14 +283,14 @@ class Blob
     if ( attractButton.state )
     {
       PVector target = new PVector( mouseX, mouseY );
-      applyForce( PVector.mult( arrive( target ), COH_STRENGTH ) );
+      applyForce( PVector.mult( arrive( target ), SEEK_STRENGTH ) );
     }
     
     // aversion
     if ( repelButton.state )
     {
       PVector target = new PVector( mouseX, mouseY );
-      applyForce( PVector.mult( flee( target ), SEP_STRENGTH ) );
+      applyForce( PVector.mult( flee( target ), FLEE_STRENGTH ) );
     }
     
     if ( wallButton.state )
