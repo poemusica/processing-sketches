@@ -1,6 +1,6 @@
 // Globals
 
-Blob[] blobs = new Blob[ 10 ];
+Blob[] blobs = new Blob[ 80 ];
 
 static float LOCAL_RANGE = 64;
 static float WANDER_STRENGTH = 2;
@@ -74,11 +74,15 @@ class Blob
       count++;
     }
     
-    if ( count > 1 ) { desired.div( count ); }
-    
-    PVector steer = PVector.sub( desired, vel );
-    steer.limit( maxForce );
-    return steer;
+    if ( count > 0 ) 
+    { 
+      desired.div( count );
+      desired.limit( maxSpeed );
+      PVector steer = PVector.sub( desired, vel );
+      steer.limit( maxForce );
+      return steer;
+    }
+      return desired;
   }
   
   // screen wrap
