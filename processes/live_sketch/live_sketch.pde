@@ -35,6 +35,7 @@ void draw()
     trailButton.draw();
     attractButton.draw();
     repelButton.draw();
+    wallButton.draw();
   }
   
   for ( Blob b : blobs )

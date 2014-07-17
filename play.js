@@ -37,3 +37,9 @@ function toggleRepel()
 	var pjs = Processing.getInstanceById("mysketch");
 	pjs.repelClick();
 }
+
+function toggleWalls()
+{
+	var pjs = Processing.getInstanceById("mysketch");
+	pjs.wallClick();
+}

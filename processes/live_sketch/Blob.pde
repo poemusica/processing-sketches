@@ -1,24 +1,25 @@
 // Globals
 
-Blob[] blobs = new Blob[ 40 ];
+Blob[] blobs = new Blob[ 10 ];
 
-static float LOCAL_RANGE = 32; // multiplied by r
-static float WANDER_STRENGTH = 1;
+static float LOCAL_RANGE = 64;
+static float WANDER_STRENGTH = 2;
 static float ALI_STRENGTH = 0.5;
 static float COH_STRENGTH = 0.5;
-static float SEP_STRENGTH = 1.5;
-static float PROX_IDEAL = 16;
+static float SEP_STRENGTH = 0.5;
+static float PROX_MIN = 40;
+static float PROX_MAX = 24;
 static float SWARM_STRENGTH = 2;
 static float SCATTER_STRENGTH = 2;
 
 // Defines Blob class
 class Blob
 {  
-  // Instance variables
   PVector pos, vel, acc;
+  float maxSpeed = 5, maxForce = 5;
+  float wanderAngle = random( 1, 360 );
   color cstroke, cfill;
   float r; // radius of shape. can also be used as a visualizer for mass. 
-  float maxSpeed = 5, maxForce;
   
   // Constructor
   Blob ( float x, float y ) 
@@ -34,8 +35,23 @@ class Blob
     cfill = randomColor();
   }
   
-  // Check edges & screen wrap
-  void checkEdges()
+  // solid walls
+  PVector checkWall()
+  {
+    float buffer = 20;
+    PVector desired = new PVector( 0, 0 );
+    if ( pos.x < buffer ) { desired = new PVector( maxSpeed, vel.y ); }
+    else if ( pos.x > width - buffer ) { desired = new PVector( -maxSpeed, vel.y ); }
+    if ( pos.y < buffer ) { desired = new PVector( vel.x, maxSpeed ); }
+    else if ( pos.y > height - buffer ) { desired = new PVector( vel.x, -maxSpeed ); }
+    
+    PVector steer = PVector.sub( desired, vel );
+    steer.limit( maxForce );
+    return steer;
+  }
+  
+  // screen wrap
+  void checkWrap()
   {
     float buffer = 2 * r;   
     if ( pos.x < -r ) { pos.x += width + buffer; }
@@ -54,12 +70,14 @@ class Blob
   // Wandering steering.
   PVector wander()
   {
-    PVector futpos = PVector.add( pos, vel );
-    PVector offset = vel.get();
-    offset.div( 3 );
-    offset.rotate( radians( random( 0, 360 ) ) );
-    PVector target = PVector.add( futpos, offset );
+    PVector futpos = PVector.add( pos, PVector.mult( vel, 15 ) );
+    PVector offset = PVector.mult( vel, 2 );
+    float limit = ( 90 );
     
+    wanderAngle = random( wanderAngle - limit, wanderAngle + limit );
+    offset.rotate( radians( wanderAngle ) );
+    
+    PVector target = PVector.add( futpos, offset );
     PVector desired = PVector.sub( target, pos );
     desired.setMag( maxSpeed );
     
@@ -79,7 +97,7 @@ class Blob
       
       float d = PVector.dist( pos, b.pos );
       
-      if ( d < PROX_IDEAL )
+      if ( d < PROX_MAX )
       { 
         PVector diff = PVector.sub( pos, b.pos ); 
         diff.div( d );
@@ -94,7 +112,7 @@ class Blob
     }
      
     PVector steer = PVector.sub( sum, vel ); 
-    steer.limit( SEP_STRENGTH );
+    steer.limit( maxForce );
     return steer;   
   }
   
@@ -108,24 +126,25 @@ class Blob
       if ( b == this ) { continue; }
       
       float d = pos.dist( b.pos );
-      if ( d > r * LOCAL_RANGE ) { continue; }
       
-      if ( d > PROX_IDEAL )
+      if ( d > PROX_MIN )
       {
-        sum.add( PVector.sub( b.pos, pos ) );
+        sum.add( b.pos );
         local++;
       }
      }
      
+     PVector steer = new PVector( 0, 0 );
      if ( local > 0 )
      {
        sum.div( local );
-       sum.setMag( maxSpeed );
-     }  
-     
-     PVector steer = PVector.sub( sum, vel ); 
-     steer.limit( COH_STRENGTH );
-     return steer;       
+       //PVector desired = PVector.sub( sum, pos );
+       //desired.setMag( maxSpeed );
+       //steer = PVector.sub( desired, vel );
+       //steer.limit( COH_STRENGTH );
+       steer = seek( sum );
+     }
+     return steer;
   }
   
   // Alignment steering
@@ -138,7 +157,7 @@ class Blob
       if ( b == this ) { continue; }
       
       float d = pos.dist( b.pos );
-      if ( d > r * LOCAL_RANGE ) { continue; }
+      if ( d > LOCAL_RANGE ) { continue; }
      
       sum.add( b.vel );
       local++;
@@ -151,7 +170,7 @@ class Blob
      }
      
      PVector steer = PVector.sub( sum, vel ); 
-     steer.limit( ALI_STRENGTH );
+     steer.limit( maxForce );
      return steer;       
   }
   
@@ -178,12 +197,12 @@ class Blob
   {
     PVector steer = new PVector( 0, 0 );
     float d = pos.dist( target );
-    if ( d < r * LOCAL_RANGE )
+    if ( d <= LOCAL_RANGE )
     {
       PVector desired = PVector.sub( target, pos );
       desired.setMag( maxSpeed );
       steer = PVector.sub( desired, vel );
-      steer.limit( SWARM_STRENGTH );
+      steer.limit( maxForce );
     }
     return steer;
   }
@@ -193,7 +212,7 @@ class Blob
   {
     PVector steer = new PVector( 0, 0 );
     float d = pos.dist( target );
-    if ( d < r * LOCAL_RANGE )
+    if ( d < LOCAL_RANGE )
     {
       PVector desired = PVector.sub( pos, target );
       desired.setMag( maxSpeed );
@@ -212,9 +231,9 @@ class Blob
     // flocking
     if ( flockButton.state )
     {
-      applyForce( cohere() );
-      applyForce( separate() );
-      applyForce( align() );
+      applyForce( PVector.mult( cohere(), COH_STRENGTH ) );
+      applyForce( PVector.mult( separate(), SEP_STRENGTH) );
+      applyForce( PVector.mult( align(), ALI_STRENGTH) );
     }
     
     // attraction
@@ -231,6 +250,9 @@ class Blob
       applyForce( flee( target ) );
     }
     
+    if ( wallButton.state )
+    { applyForce( checkWall() ); }
+    
     // velocity and position change
     vel.add( acc );
     vel.limit( maxSpeed );
@@ -238,11 +260,12 @@ class Blob
     acc.mult( 0 );
     
     // debugging
-    if ( this == blobs[ 0 ] ) 
-      { println( pos, vel, flockButton.state ); }
+    //if ( this == blobs[ 0 ] ) 
+      //{ println( pos, vel, flockButton.state ); }
     
     // screen wrap
-    checkEdges();
+    if ( !wallButton.state )
+    { checkWrap(); }
   }
       
   // Draw    

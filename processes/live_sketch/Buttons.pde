@@ -1,9 +1,11 @@
 // Globals
 
-Button flockButton = new Button( new PVector( 10 , height + 5 ), 105, 35, "Toggle Flocking", true );
-Button trailButton = new Button( new PVector( 120, height + 5 ), 105, 35, "Toggle Trails", false );
-Button attractButton = new Button( new PVector( 230, height + 5 ), 105, 35, "Toggle Attract", false );
-Button repelButton = new Button( new PVector( 340, height + 5 ), 105, 35, "Toggle Repel", false );
+Button flockButton = new Button( new PVector( 10 , height + 5 ), 50, 35, "Flock", true );
+Button trailButton = new Button( new PVector( 70, height + 5 ), 50, 35, "Trails", false );
+Button attractButton = new Button( new PVector( 130, height + 5 ), 50, 35, "Attract", false );
+Button repelButton = new Button( new PVector( 190, height + 5 ), 50, 35, "Repel", false );
+Button wallButton = new Button( new PVector( 250, height + 5 ), 50, 35, "Walls", false );
+
 
 // Defines Button class
 class Button
@@ -64,6 +66,9 @@ void mouseClicked( MouseEvent e )
   
   if ( repelButton.contains( e.getX(), e.getY() ) )
   { repelClick(); }
+  
+  if ( wallButton.contains( e.getX(), e.getY() ) )
+  { wallClick(); }
 }
 
 // Javascript Helpers (must be top-level functions)
@@ -88,8 +93,13 @@ void attractClick()
 
 void repelClick()
 {
-  boolean status = repelButton.state;
   repelButton.state = !repelButton.state;
   if ( attractButton.state ) { attractButton.state = false; attractButton.swapColor(); }
   repelButton.swapColor();
+}
+
+void wallClick()
+{
+  wallButton.state = !wallButton.state;
+  wallButton.swapColor();
 }
