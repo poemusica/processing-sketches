@@ -8,9 +8,9 @@ void bindJavascript( Javascript js ) { javascript = js; }
 // Setup the Processing Canvas
 void setup()
 {
-  size( 500, 500 );
+  size( 800, 500 );
   smooth();
-  frameRate( 30 );
+  frameRate( 60 );
   
   // make blobs
   for ( int i = 0; i < blobs.length; i++ ) 

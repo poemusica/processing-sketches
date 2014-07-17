@@ -3,18 +3,18 @@
 Blob[] blobs = new Blob[ 80 ];
 
 static float LOCAL_RANGE = 64;
-static float WANDER_STRENGTH = 2;
+static float WANDER_STRENGTH = 0;
 static float ALI_STRENGTH = 0.5;
-static float COH_STRENGTH = 0.5;
-static float SEP_STRENGTH = 0.5;
-static float PROX_MIN = 40;
-static float PROX_MAX = 24;
+static float COH_STRENGTH = 1;
+static float SEP_STRENGTH = 1;
+static float PROX_MIN = 15;
+static float PROX_MAX = 55;
 
 // Defines Blob class
 class Blob
 {  
   PVector pos, vel, acc;
-  float maxSpeed = 5, maxForce = 5;
+  float maxSpeed = 3, maxForce = 1;
   float wanderAngle = random( 1, 360 );
   color cstroke, cfill;
   float r; // radius of shape. can also be used as a visualizer for mass. 
@@ -132,8 +132,8 @@ class Blob
       
       if ( d < PROX_MAX )
       { 
-        PVector diff = PVector.sub( pos, b.pos ); 
-        diff.div( d );
+        PVector diff = PVector.sub( pos, b.pos );
+        diff.setMag( 1 / d );
         desired.add( diff );
         tooNear++;
       }  
@@ -164,7 +164,7 @@ class Blob
       if ( d < LOCAL_RANGE && d > PROX_MIN  )
       {
         PVector diff = PVector.sub( b.pos, pos );
-        diff.mult( d );
+        diff.setMag( map( d, PROX_MIN, LOCAL_RANGE, 0, 1 ) );
         desired.add( diff );
         tooFar++;
       }
@@ -177,7 +177,7 @@ class Blob
        desired.setMag( maxSpeed );
        steer = PVector.sub( desired, vel );
        steer.limit( maxForce );
-       //steer = seek( desired );
+       steer.limit( maxForce ); 
      }
      return steer;
   }
@@ -272,6 +272,7 @@ class Blob
       applyForce( PVector.mult( cohere(), COH_STRENGTH ) );
       applyForce( PVector.mult( separate(), SEP_STRENGTH) );
       applyForce( PVector.mult( align(), ALI_STRENGTH) );
+      
     }
     
     // attraction
@@ -292,6 +293,7 @@ class Blob
     { applyForce( checkWall() ); }
     
     // velocity and position change
+    acc.normalize();
     vel.add( acc );
     vel.limit( maxSpeed );
     pos.add( vel );
