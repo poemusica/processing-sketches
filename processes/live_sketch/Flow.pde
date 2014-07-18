@@ -4,20 +4,18 @@ FlowField randomFlow = new FlowField( 10 );
 // Defines vector flow field class.
 class FlowField
 {
-  PVector [][] field;
   int resolution;
   int cols, rows;
-  color c;
-  float r;
+  PVector [][] field;
+  color lineColor;
   
-  FlowField( int r )
+  FlowField( int res )
   {
-    resolution = r;
+    resolution = res;
     cols = width / resolution;
     rows = height / resolution;
     field = new PVector [ cols ] [ rows ];
-    c = randomColor();
-    r = 2;
+    lineColor = randomColor();
     init();
   }
   
@@ -44,7 +42,7 @@ class FlowField
       for ( int r=0; r < rows; r++ )
       {
         Arrow a = new Arrow();
-        a.display( v, c );
+        a.display( v, lineColor );
       }
     }
   }
@@ -58,7 +56,6 @@ class Arrow
   void display( PVector v, color c )
   {
     stroke( c );
-    fill( c );
     strokeWeight( 1 );
     pushMatrix();
     translate( v.x, v.y );
