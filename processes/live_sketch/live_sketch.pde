@@ -20,12 +20,18 @@ void setup()
     Blob b = new Blob( x, y );
     blobs[ i ] = b;
   }
+  
+  // make vector field
+  randomFlow.init();
 }
 
 // Main draw loop
 void draw()
 {
   if ( !trailButton.state ) { background( 0xFF33FFCC ); }
+  
+  // Draw flow field vectors
+  randomFlow.draw();
     
   // If javascript is not bound, draw buttons in processing.
   // Provides one second delay for binding.
@@ -37,9 +43,7 @@ void draw()
     repelButton.draw();
     wallButton.draw();
   }
-   
-  randomFlow.draw();  
-  
+       
   for ( Blob b : blobs )
   {
     b.update();
