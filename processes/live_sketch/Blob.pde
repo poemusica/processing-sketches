@@ -11,6 +11,7 @@ static float SEP_STRENGTH = 1.5;
 static float SEEK_STRENGTH = COH_STRENGTH * 1.75;
 static float FLEE_STRENGTH = SEP_STRENGTH * 1.75;
 
+static float WALL_STRENGTH = 2;
 static float PROX_MIN =  30;
 static float PROX_MAX = 45;
 
@@ -40,38 +41,38 @@ class Blob
   // solid walls
   PVector checkWall()
   {
-    float buffer = 20;
+    float buffer = 25;
     int count = 0;
     PVector desired = new PVector( 0, 0 );
-    if ( pos.x < buffer )
+    if ( pos.x < buffer ) // left
     { 
       PVector dx = new PVector( maxSpeed, vel.y );
-      float m = map( buffer - pos.x, 0, buffer, 0, 1 );
-      dx.mult( m );
+      //float m = map( buffer - pos.x, 0, buffer, 0, 1 );
+      //dx.mult( m );
       desired.add( dx );
       count++;
     }
-    else if ( pos.x > width - buffer ) 
+    else if ( pos.x > width - buffer ) // right
     {
       PVector dx = new PVector( -maxSpeed, vel.y );
-      float m = map( pos.x, width + buffer, width, 0, 1 );
-      dx.mult( m );
+      //float m = map( pos.x, width + buffer, width, 0, 1 );
+      //dx.mult( m );
       desired.add( dx );
       count++;
     }
-    if ( pos.y < buffer )
+    if ( pos.y < buffer ) // top
     {
       PVector dy = new PVector( vel.x, maxSpeed );
-      float m = map( buffer - pos.y, 0, buffer, 0, 1 );
-      dy.mult( m );
+      //float m = map( buffer - pos.y, 0, buffer, 0, 1 );
+      //dy.mult( m );
       desired.add( dy );
       count++;
     }
-    else if ( pos.y > height - buffer )
+    else if ( pos.y > height - buffer ) // bottom
     {
       PVector dy = new PVector( vel.x, -maxSpeed );
-      float m = map( pos.y, height + buffer, height, 0, 1 );
-      dy.mult( m );
+      //float m = map( pos.y, height + buffer, height, 0, 1 );
+      //dy.mult( m );
       desired.add( dy );
       count++;
     }
@@ -82,7 +83,7 @@ class Blob
       desired.div( count );
       desired.limit( maxSpeed );
       steer = PVector.sub( desired, vel );
-      steer.limit( maxForce );
+      steer.setMag( WALL_STRENGTH );
     }
       return steer;
   }
@@ -180,7 +181,6 @@ class Blob
        desired.div( tooFar );
        desired.setMag( maxSpeed );
        steer = PVector.sub( desired, vel );
-       steer.limit( maxForce );
        steer.limit( maxForce ); 
      }
      return steer;
