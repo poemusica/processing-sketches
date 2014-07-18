@@ -22,7 +22,7 @@ void setup()
   }
   
   // make vector field
-  randomFlow.init();
+  perlinFlow.init();
 }
 
 // Main draw loop
@@ -31,7 +31,7 @@ void draw()
   if ( !trailButton.state ) { background( 0xFF33FFCC ); }
   
   // Draw flow field vectors
-  randomFlow.draw();
+  if ( flowButton.state ) { perlinFlow.draw(); }
     
   // If javascript is not bound, draw buttons in processing.
   // Provides one second delay for binding.
@@ -42,6 +42,7 @@ void draw()
     attractButton.draw();
     repelButton.draw();
     wallButton.draw();
+    flowButton.draw();
   }
        
   for ( Blob b : blobs )

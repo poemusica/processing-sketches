@@ -1,5 +1,5 @@
 
-FlowField randomFlow = new FlowField( 50 );
+FlowField perlinFlow = new FlowField( 20 );
 
 // Defines vector flow field class.
 class FlowField
@@ -21,10 +21,18 @@ class FlowField
     cols = width / cellSize;
     rows = height / cellSize;
     field = new PVector [ cols ] [ rows ];
+    
+    float xoff = 0;
     for ( int c = 0; c < cols; c++ )
     {
+      float yoff = 0;
       for ( int r = 0; r < rows; r++ )
-      { field[ c ][ r ] = PVector.random2D();}
+      { 
+        float angle = map( noise( xoff, yoff ), 0, 1, 0, TWO_PI );
+        field [ c ][ r ] = new PVector( cos( angle ), sin( angle ) );
+        yoff += 0.1;
+      }
+      xoff += 0.01;
     } 
   }
   
@@ -40,12 +48,12 @@ class FlowField
     PVector loc = new PVector( cellSize / 2, cellSize / 2 );
     for ( int c = 0; c < cols; c++ )
     {
+      loc.y = cellSize / 2;
       for ( int r=0; r < rows; r++ )
       {
         arrow(  loc.x, loc.y, field[ c ][ r ], lineColor );
         loc.y += cellSize;
       }
-      loc.y = cellSize / 2;
       loc.x += cellSize;
     }
   }
@@ -62,9 +70,9 @@ void arrow( float x, float y, PVector v, color c )
   pushMatrix();
   translate( x, y );
   rotate( v.heading() );
-  line( -25, 0, 25, 0 );
-  line( 15, 5, 25, 0 );
-  line( 15, -5, 25, 0 );
+  line( -8, 0, 8, 0 );
+  line( 3, -3, 8, 0 );
+  line( 3, 3, 8, 0 );
   popMatrix();
 }
 

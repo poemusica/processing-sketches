@@ -264,6 +264,16 @@ class Blob
     return steer;
   }
   
+  // Go with the flow
+  PVector followFlow()
+  {
+    PVector desired = perlinFlow.lookup( pos );
+    desired.setMag( maxSpeed );
+    PVector steer = PVector.sub( desired, vel );
+    steer.limit( maxForce );
+    return steer;
+  }
+  
   // Update
   void update()
   {
@@ -277,6 +287,12 @@ class Blob
       applyForce( PVector.mult( separate(), SEP_STRENGTH) );
       applyForce( PVector.mult( align(), ALI_STRENGTH) );
       
+    }
+    
+    // follow flow 
+    if ( flowButton.state )
+    {
+     applyForce( PVector.mult( followFlow(), 0.75 ) ); 
     }
     
     // attraction

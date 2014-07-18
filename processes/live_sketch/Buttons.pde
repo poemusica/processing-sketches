@@ -1,10 +1,11 @@
 // Globals
 
 Button flockButton = new Button( new PVector( 10 , height + 5 ), 50, 35, "Flock", true );
-Button trailButton = new Button( new PVector( 70, height + 5 ), 50, 35, "Trails", false );
-Button attractButton = new Button( new PVector( 130, height + 5 ), 50, 35, "Attract", false );
-Button repelButton = new Button( new PVector( 190, height + 5 ), 50, 35, "Repel", false );
-Button wallButton = new Button( new PVector( 250, height + 5 ), 50, 35, "Walls", false );
+Button flowButton = new Button( new PVector( 70, height + 5 ), 50, 35, "Flow", false );
+Button wallButton = new Button( new PVector( 130, height + 5 ), 50, 35, "Walls", false );
+Button attractButton = new Button( new PVector( 190, height + 5 ), 50, 35, "Attract", false );
+Button repelButton = new Button( new PVector( 250, height + 5 ), 50, 35, "Repel", false );
+Button trailButton = new Button( new PVector( 310, height + 5 ), 50, 35, "Trails", false );
 
 
 // Defines Button class
@@ -67,6 +68,9 @@ void mouseClicked( MouseEvent e )
   
   if ( wallButton.contains( e.getX(), e.getY() ) )
   { wallClick(); }
+  
+  if ( flowButton.contains( e.getX(), e.getY() ) )
+  { flowClick(); }
 }
 
 // Javascript Helpers (must be top-level functions)
@@ -100,4 +104,10 @@ void wallClick()
 {
   wallButton.state = !wallButton.state;
   wallButton.swapColor();
+}
+
+void flowClick()
+{
+  flowButton.state = !flowButton.state;
+  flowButton.swapColor();
 }
