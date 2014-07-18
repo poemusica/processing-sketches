@@ -7,7 +7,7 @@ class FlowField
   PVector [][] field;
   int resolution;
   int cols, rows;
-  color cstroke;
+  color c;
   float r;
   
   FlowField( int r )
@@ -17,7 +17,7 @@ class FlowField
     rows = height / resolution;
     field = new PVector [ cols ] [ rows ];
     cstroke = randomColor();
-    r = 4;
+    r = 2;
     init();
   }
   
@@ -40,7 +40,8 @@ class FlowField
   void draw()
   {
     stroke( 2 );
-    stroke( cstroke );
+    stroke( c );
+    cfill( c );
     
     for ( int c = 0; c < cols; c++ )
     {
@@ -57,3 +58,11 @@ class FlowField
   }
   
 }
+
+
+//  stroke( c );
+//  fill( c );
+//  strokeWeight( 1.5 );
+//  translate( width/2, height/2);
+//  line( 0, 0, 40, 0 );
+//  triangle( 40, 5,  50, 0, 40, -5 );

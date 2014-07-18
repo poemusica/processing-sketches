@@ -37,8 +37,8 @@ void draw()
     repelButton.draw();
     wallButton.draw();
   }
-  
-  randomFlow.draw();
+   
+  randomFlow.draw();  
   
   for ( Blob b : blobs )
   {
