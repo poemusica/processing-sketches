@@ -28,9 +28,7 @@ class Button
   }
   
   boolean contains( int x, int y )
-  {
-    return pos.x < x && x < pos.x + bwidth && pos.y < y && y < pos.y + bheight;
-  }
+  { return pos.x < x && x < pos.x + bwidth && pos.y < y && y < pos.y + bheight; }
   
   void draw( ) 
   {

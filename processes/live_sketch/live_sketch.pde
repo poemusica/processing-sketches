@@ -38,6 +38,8 @@ void draw()
     wallButton.draw();
   }
   
+  randomFlow.draw();
+  
   for ( Blob b : blobs )
   {
     b.update();
