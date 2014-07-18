@@ -37,34 +37,35 @@ class FlowField
  
   void draw()
   {    
+    PVector loc = new PVector( resolution / 2, resolution / 2 );
     for ( int c = 0; c < cols; c++ )
     {
       for ( int r=0; r < rows; r++ )
       {
-        Arrow a = new Arrow();
-        a.display( v, lineColor );
+        arrow(  loc.x, loc.y, field[ c ][ r ], lineColor );
+        loc.x += resolution;
       }
+      loc.y += resolution;
     }
   }
   
 }
 
-// Arrow Shape
+// UTILITIES
 
-class Arrow
+
+void arrow( float x, float y, PVector v, color c )
 {
-  void display( PVector v, color c )
-  {
-    stroke( c );
-    strokeWeight( 1 );
-    pushMatrix();
-    translate( v.x, v.y );
-    rotate( v. heading() );
-    line( 0, 0, 40, 0 );
-    line( 40, 5, 50, 0 );
-    line( 40, -5, 50, 0 );
-    popMatrix();
-  }
+  stroke( c );
+  strokeWeight( 1 );
+  pushMatrix();
+  translate( v.x, v.y );
+  rotate( v. heading() );
+  line( 0, 0, 40, 0 );
+  line( 40, 5, 50, 0 );
+  line( 40, -5, 50, 0 );
+  popMatrix();
 }
+
 
 
