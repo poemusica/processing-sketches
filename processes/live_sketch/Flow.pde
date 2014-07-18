@@ -16,7 +16,7 @@ class FlowField
     cols = width / resolution;
     rows = height / resolution;
     field = new PVector [ cols ] [ rows ];
-    cstroke = randomColor();
+    c = randomColor();
     r = 2;
     init();
   }
@@ -36,33 +36,38 @@ class FlowField
     int row = int( constrain( loc.y / resolution, 0, rows -1) );
     return field[column][row].get();
   }
-  
+ 
   void draw()
-  {
-    stroke( 2 );
-    stroke( c );
-    cfill( c );
-    
+  {    
     for ( int c = 0; c < cols; c++ )
     {
       for ( int r=0; r < rows; r++ )
       {
-        PVector v = field[ c ][ r ];
-        pushMatrix();
-        translate( v.x, v.y );
-        rotate( v.heading() );
-        triangle( -r, r/2, r, 0, -r, -r/2 );
-        popMatrix();
+        Arrow a = new Arrow();
+        a.display( v, c );
       }
     }
   }
   
 }
 
+// Arrow Shape
 
-//  stroke( c );
-//  fill( c );
-//  strokeWeight( 1.5 );
-//  translate( width/2, height/2);
-//  line( 0, 0, 40, 0 );
-//  triangle( 40, 5,  50, 0, 40, -5 );
+class Arrow
+{
+  void display( PVector v, color c )
+  {
+    stroke( c );
+    fill( c );
+    strokeWeight( 1 );
+    pushMatrix();
+    translate( v.x, v.y );
+    rotate( v. heading() );
+    line( 0, 0, 40, 0 );
+    line( 40, 5, 50, 0 );
+    line( 40, -5, 50, 0 );
+    popMatrix();
+  }
+}
+
+
