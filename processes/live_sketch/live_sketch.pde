@@ -8,9 +8,9 @@ void bindJavascript( Javascript js ) { javascript = js; }
 // Setup the Processing Canvas
 void setup()
 {
-  size( 800, 500 );
+  size( 800, 500, P2D );
   smooth();
-  frameRate( 30 );
+  frameRate( 60 );
   
   // make blobs
   for ( int i = 0; i < blobs.length; i++ ) 
@@ -23,13 +23,14 @@ void setup()
   
   // make vector field
   perlinFlow.init();
+ 
 }
 
 // Main draw loop
 void draw()
 {
   // benchmark
-  //println( frameRate );
+  println( frameRate );
   
   if ( !trailButton.state ) { background( 0xFF33FFCC ); }
   
@@ -37,7 +38,7 @@ void draw()
   if ( flowButton.state )
   { 
     perlinFlow.update();
-    perlinFlow.draw(); 
+    //perlinFlow.draw(); 
   }
     
   // If javascript is not bound, draw buttons in processing.
@@ -57,7 +58,6 @@ void draw()
     b.update();
     b.draw();
   }
-
 }
 
 // UTILITIES //
