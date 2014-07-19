@@ -292,7 +292,8 @@ class Blob
     // follow flow 
     if ( flowButton.state )
     {
-     applyForce( PVector.mult( followFlow(), 0.75 ) ); 
+     applyForce( PVector.mult( followFlow(), 0.5 ) );
+     //applyForce( PVector.mult( separate(), SEP_STRENGTH) ); 
     }
     
     // attraction

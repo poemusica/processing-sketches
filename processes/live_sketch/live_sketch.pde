@@ -28,10 +28,17 @@ void setup()
 // Main draw loop
 void draw()
 {
+  // benchmark
+  //println( frameRate );
+  
   if ( !trailButton.state ) { background( 0xFF33FFCC ); }
   
   // Draw flow field vectors
-  if ( flowButton.state ) { perlinFlow.draw(); }
+  if ( flowButton.state )
+  { 
+    perlinFlow.update();
+    perlinFlow.draw(); 
+  }
     
   // If javascript is not bound, draw buttons in processing.
   // Provides one second delay for binding.

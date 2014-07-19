@@ -8,6 +8,7 @@ class FlowField
   int cols, rows;
   PVector [][] field;
   color lineColor;
+  float z = 0;
   
   FlowField( int csize )
   {
@@ -22,17 +23,19 @@ class FlowField
     rows = height / cellSize;
     field = new PVector [ cols ] [ rows ];
     
+    float zoff = z;
     float xoff = 0;
     for ( int c = 0; c < cols; c++ )
     {
       float yoff = 0;
       for ( int r = 0; r < rows; r++ )
       { 
-        float angle = map( noise( xoff, yoff ), 0, 1, 0, TWO_PI );
+        float angle = map( noise( xoff, yoff, zoff ), 0, 1, 0, TWO_PI );
         field [ c ][ r ] = new PVector( cos( angle ), sin( angle ) );
+        //field [ c ][ r ] = PVector.random2D();
         yoff += 0.1;
       }
-      xoff += 0.01;
+      xoff += 0.1;
     } 
   }
   
@@ -43,8 +46,17 @@ class FlowField
     return field[column][row].get();
   }
  
+  void update()
+  {
+    if ( frameCount % 10 == 0 )
+    {
+      z += 0.1;
+      init();
+    }
+  }
+  
   void draw()
-  {    
+  {      
     PVector loc = new PVector( cellSize / 2, cellSize / 2 );
     for ( int c = 0; c < cols; c++ )
     {
