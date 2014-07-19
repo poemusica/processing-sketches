@@ -8,12 +8,14 @@ class FlowField
   int cols, rows;
   PVector [][] field;
   color lineColor;
+  float perlinBias;
   float z = 0;
   
   FlowField( int csize )
   {
     cellSize = csize;
     lineColor = randomColor();
+    perlinBias = random( 1, 360 );
     init();
   }
   
@@ -31,6 +33,7 @@ class FlowField
       for ( int r = 0; r < rows; r++ )
       { 
         float angle = map( noise( xoff, yoff, zoff ), 0, 1, 0, TWO_PI );
+        angle += radians( perlinBias );
         field [ c ][ r ] = new PVector( cos( angle ), sin( angle ) );
         //field [ c ][ r ] = PVector.random2D();
         yoff += 0.1;
@@ -38,7 +41,7 @@ class FlowField
       xoff += 0.1;
     } 
   }
-  
+ 
   PVector lookup( PVector loc )
   {
     int column = int( constrain( loc.x / cellSize, 0, cols - 1 ) );
@@ -51,6 +54,7 @@ class FlowField
     if ( frameCount % 10 == 0 )
     {
       z += 0.1;
+      perlinBias += random( -5, 5 );
       init();
     }
   }
