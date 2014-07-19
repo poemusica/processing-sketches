@@ -20,10 +20,16 @@ function toggleFlock()
 	pjs.flockClick();
 }
 
-function toggleTrails()
+function toggleFlow()
 {
 	var pjs = Processing.getInstanceById("mysketch");
-	pjs.trailClick();
+	pjs.flowClick();
+}
+
+function toggleWalls()
+{
+	var pjs = Processing.getInstanceById("mysketch");
+	pjs.wallClick();
 }
 
 function toggleAttract()
@@ -38,8 +44,8 @@ function toggleRepel()
 	pjs.repelClick();
 }
 
-function toggleWalls()
+function toggleTrails()
 {
 	var pjs = Processing.getInstanceById("mysketch");
-	pjs.wallClick();
+	pjs.trailClick();
 }
