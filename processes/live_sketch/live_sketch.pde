@@ -5,12 +5,16 @@ interface Javascript {}
 Javascript javascript = null;
 void bindJavascript( Javascript js ) { javascript = js; }
 
+// Globals
+ControlPanel controls;
+FlowField perlinFlow;
+
 // Setup the Processing Canvas
 void setup()
 {
-  size( 800, 500, P2D );
+  size( 800, 500 );
   smooth();
-  frameRate( 60 );
+  frameRate( 30 );
   
   // make blobs
   for ( int i = 0; i < blobs.length; i++ ) 
@@ -21,42 +25,53 @@ void setup()
     blobs[ i ] = b;
   }
   
+  // make buttons
+  controls = new ControlPanel();
+  
   // make vector field
-  perlinFlow.init();
- 
+  perlinFlow = new FlowField( 25 );
 }
 
 // Main draw loop
 void draw()
 {
   // benchmark
-  println( frameRate );
+  //println( frameRate );
   
-  if ( !trailButton.state ) { background( 0xFF33FFCC ); }
+  // Background is now part of perlin flow.
+  //if ( !controls.buttons[5].state ) { background( 0xFF33FFCC ); }
   
-  // Draw flow field vectors
-  if ( flowButton.state )
+  // Draw flow field vectors to off-screen buffer
+  if ( controls.buttons[(int)controls.buttonsIndex.get("flow")].state )
   { 
     perlinFlow.update();
-    //perlinFlow.draw(); 
+    perlinFlow.draw();
   }
     
   // If javascript is not bound, draw buttons in processing.
   // Provides one second delay for binding.
   if ( javascript == null && frameCount > 30 )
   {
-    flockButton.draw();
-    trailButton.draw();
-    attractButton.draw();
-    repelButton.draw();
-    wallButton.draw();
-    flowButton.draw();
+    controls.update();
+    controls.draw();
   }
        
   for ( Blob b : blobs )
   {
     b.update();
     b.draw();
+  }
+
+}
+
+
+// MOUSE EVENTS //
+void mouseClicked( MouseEvent e )
+{
+  for (Button b : controls.buttons)
+  {
+    if ( b.contains(e.getX(), e.getY()) )
+    { handleClick(b.label); } 
   }
 }
 

@@ -281,7 +281,7 @@ class Blob
     applyForce( PVector.mult( wander(), WANDER_STRENGTH ) );
     
     // flocking
-    if ( flockButton.state )
+    if ( controls.buttons[(int)controls.buttonsIndex.get("flock")].state )
     {
       applyForce( PVector.mult( cohere(), COH_STRENGTH ) );
       applyForce( PVector.mult( separate(), SEP_STRENGTH) );
@@ -290,27 +290,27 @@ class Blob
     }
     
     // follow flow 
-    if ( flowButton.state )
+    if ( controls.buttons[(int)controls.buttonsIndex.get("flow")].state )
     {
      applyForce( PVector.mult( followFlow(), 0.5 ) );
      //applyForce( PVector.mult( separate(), SEP_STRENGTH) ); 
     }
     
     // attraction
-    if ( attractButton.state )
+    if ( controls.buttons[(int)controls.buttonsIndex.get("attract")].state )
     {
       PVector target = new PVector( mouseX, mouseY );
       applyForce( PVector.mult( arrive( target ), SEEK_STRENGTH ) );
     }
     
     // aversion
-    if ( repelButton.state )
+    if ( controls.buttons[(int)controls.buttonsIndex.get("repel")].state )
     {
       PVector target = new PVector( mouseX, mouseY );
       applyForce( PVector.mult( flee( target ), FLEE_STRENGTH ) );
     }
     
-    if ( wallButton.state )
+    if ( controls.buttons[(int)controls.buttonsIndex.get("walls")].state )
     { applyForce( checkWall() ); }
     
     // velocity and position change
@@ -324,7 +324,7 @@ class Blob
     //if ( this == blobs[ 0 ] ) { println( pos, vel, flockButton.state ); }
     
     // screen wrap
-    if ( !wallButton.state )
+    if ( !controls.buttons[(int)controls.buttonsIndex.get("walls")].state )
     { checkWrap(); }
   }
       

@@ -1,32 +1,37 @@
-//Globals
-FlowField perlinFlow = new FlowField( 20 );
-
 // Defines vector flow field class.
 class FlowField
 {
   int cellSize;
-  int cols, rows;
+  int cols, rows, bookmark;
   PVector [][] field;
   color lineColor;
-  float perlinBias;
-  float z = 0;
-  Arrow arrow;
+  float fieldBias;
+  float zoff = 0;
+  PGraphics workingBuffer;
+  PGraphics visibleBuffer;
   
   FlowField( int csize )
   {
     cellSize = csize;
-    lineColor = randomColor();
-    perlinBias = random( 1, 360 );
-  }
-  
-  void init()
-  {
+    lineColor = color(200);
+    fieldBias = random( 1, 360 );
     cols = width / cellSize;
     rows = height / cellSize;
+    bookmark = 0;
     field = new PVector [ cols ] [ rows ];
-    arrow = new Arrow( 16 );
-    
-    float zoff = z;
+    workingBuffer = createGraphics(width, height);
+    visibleBuffer = createGraphics(width, height);
+    visibleBuffer.beginDraw();
+    visibleBuffer.background(0xFF33FFCC);
+    visibleBuffer.endDraw();
+    workingBuffer.beginDraw();
+    workingBuffer.background(0xFF33FFCC);
+    workingBuffer.endDraw();
+    reCompute();
+  }
+  
+  void reCompute()
+  {
     float xoff = 0;
     for ( int c = 0; c < cols; c++ )
     {
@@ -34,13 +39,14 @@ class FlowField
       for ( int r = 0; r < rows; r++ )
       { 
         float angle = map( noise( xoff, yoff, zoff ), 0, 1, 0, TWO_PI );
-        angle += radians( perlinBias );
+        angle += radians( fieldBias );
         field [ c ][ r ] = new PVector( cos( angle ), sin( angle ) );
-        //field [ c ][ r ] = PVector.random2D();
         yoff += 0.1;
       }
       xoff += 0.1;
-    } 
+    }
+    zoff += 0.1;
+    fieldBias += random( -15, 15 );
   }
  
   PVector lookup( PVector loc )
@@ -52,80 +58,51 @@ class FlowField
  
   void update()
   {
-    if ( frameCount % 10 == 0 )
-    {
-      z += 0.1;
-      perlinBias += random( -15, 15 );
-      init();
-    }
+    if ( frameCount % 10 == 0 ) { reCompute(); }
   }
   
   void draw()
-  {      
-    PVector loc = new PVector( cellSize / 2, cellSize / 2 );
-    for ( int c = 0; c < cols; c++ )
+  {
+    if ( frameCount % 10 == 0 ) { image( visibleBuffer, 0, 0 ); }
+    int stoppingPoint = bookmark + cols / 8;
+    if ( stoppingPoint > cols ) { stoppingPoint = cols; }
+    
+    workingBuffer.beginDraw();
+    workingBuffer.stroke( lineColor );
+    workingBuffer.strokeWeight( 1 );
+    PVector loc = new PVector( bookmark * cellSize + cellSize / 2, cellSize / 2 );
+    for ( int c = bookmark; c < stoppingPoint; c++ )
     {
       loc.y = cellSize / 2;
       for ( int r=0; r < rows; r++ )
-      {
-        pushMatrix();
-        translate(loc.x, loc.y);
-        rotate(field[c][r].heading());
-        arrow.display();
-        popMatrix();
+      {        
+        workingBuffer.pushMatrix();
+        workingBuffer.translate(loc.x, loc.y);
+        workingBuffer.rotate(field[c][r].heading());
+       
+        workingBuffer.line( -8, 0, 8, 0 );
+        workingBuffer.line( 3, -3, 8, 0 );
+        workingBuffer.line( 3, 3, 8, 0 );
+       
+        workingBuffer.popMatrix();
         loc.y += cellSize;
       }
       loc.x += cellSize;
     }
+    workingBuffer.endDraw();
+    bookmark = stoppingPoint;
+    
+    if (stoppingPoint == cols)
+    {
+      PGraphics temp = visibleBuffer;
+      visibleBuffer = workingBuffer;
+      workingBuffer = temp;
+      workingBuffer.beginDraw();
+      workingBuffer.background( 0xFF33FFCC );
+      workingBuffer.endDraw();
+      bookmark = 0;
+    }
+    image(visibleBuffer, 0, 0);
   }
   
 }
-
-// Defines Arrow shape
-
-class Arrow
-{
-  PShape s;
-  float l;
-  
-  Arrow(int len) {
-    l = len;
-    
-    s = createShape();
-    s.beginShape();
-    s.stroke(0);
-    s.fill( 0xFF33FFCC );
-    s.strokeWeight(1);
-    
-    s.vertex(-l/2, 0);
-    s.vertex(l/2, 0);
-    
-    s.beginContour();
-    s.vertex(-l/5, -l/5);
-    s.vertex(l/2, 0);
-    s.vertex(-l/5, l/5);
-    s.endContour();
-    
-    s.endShape();
-  }
-  
-  void display()
-  {
-    shape(s);
-  }
-}
-
-// UTILITIES
-
-
-//void drawArrow()
-//{
-//  arrow = createGraphics( width, height );
-//  arrow.beginDraw();
-//  arrow.beginShape(QUADS);
-//  arrow.line( -8, 0, 8, 0 );
-//  arrow.line( 3, -3, 8, 0 );
-//  arrow.line( 3, 3, 8, 0 );
-//  arrow.endShape();
-//  arrow.endDraw();
-//}

@@ -1,11 +1,55 @@
 // Globals
 
-Button flockButton = new Button( new PVector( 10 , height + 5 ), 50, 35, "Flock", true );
-Button flowButton = new Button( new PVector( 70, height + 5 ), 50, 35, "Flow", false );
-Button wallButton = new Button( new PVector( 130, height + 5 ), 50, 35, "Walls", false );
-Button attractButton = new Button( new PVector( 190, height + 5 ), 50, 35, "Attract", false );
-Button repelButton = new Button( new PVector( 250, height + 5 ), 50, 35, "Repel", false );
-Button trailButton = new Button( new PVector( 310, height + 5 ), 50, 35, "Trails", false );
+class ControlPanel
+{
+  Button[] buttons;
+  HashMap<String,Integer> buttonsIndex;
+  PGraphics pg;
+  boolean stale;
+  
+  ControlPanel()
+  {
+    buttons = new Button[6];
+    buttonsIndex = new HashMap<String,Integer>();
+    buttons[0] = new Button( new PVector( 10 , height - 60 ), 50, 35, "flock", true );
+    buttonsIndex.put( "flock", 0 );
+    buttons[1] = new Button( new PVector( 70, height - 60 ), 50, 35, "flow", true );
+    buttonsIndex.put( "flow", 1 );
+    buttons[2] = new Button( new PVector( 130, height - 60 ), 50, 35, "walls", false );
+    buttonsIndex.put( "walls", 2 );
+    buttons[3] = new Button( new PVector( 190, height - 60 ), 50, 35, "attract", false );
+    buttonsIndex.put( "attract", 3 );
+    buttons[4] = new Button( new PVector( 250, height - 60 ), 50, 35, "repel", false );
+    buttonsIndex.put( "repel", 4 );
+    buttons[5] = new Button( new PVector( 310, height - 60 ), 50, 35, "trails", false );
+    buttonsIndex.put( "trails", 5 );
+    
+    // fill buffer
+    pg = createGraphics( width, height );
+    stale = true;
+  }
+ 
+ void fillBuffer()
+ {
+   pg.beginDraw();
+   pg.clear();  // WARNING: BREAKS Processing.js!
+   for ( Button b : buttons )
+   {
+     b.draw( pg );
+   }
+   pg.endDraw();
+   stale = false;
+ }
+ 
+ void update()
+ { 
+   if ( stale ) { fillBuffer(); }
+ }
+ 
+ void draw()
+ { image( pg, 0, 0 ); }
+  
+}
 
 
 // Defines Button class
@@ -31,15 +75,15 @@ class Button
   boolean contains( int x, int y )
   { return pos.x < x && x < pos.x + bwidth && pos.y < y && y < pos.y + bheight; }
   
-  void draw( ) 
+  void draw( PGraphics pg ) 
   {
-    strokeWeight( 3 );
-    stroke( cstroke );
-    fill( cfill );
-    rect( pos.x, pos.y, bwidth, bheight, 10 );
-    textSize( 12 );
-    fill( 0,0,0 );
-    text( label, pos.x + 5, pos.y + bheight/2 + 4 );
+    pg.strokeWeight( 3 );
+    pg.stroke( cstroke );
+    pg.fill( cfill );
+    pg.rect( pos.x, pos.y, bwidth, bheight, 10 );
+    pg.textSize( 12 );
+    pg.fill( 0,0,0 );
+    pg.text( label, pos.x + 5, pos.y + bheight/2 + 4 );
   }
   
   void swapColor()
@@ -51,63 +95,24 @@ class Button
 }
 
 
-// Mouse clicks
-void mouseClicked( MouseEvent e )
+// Javascript Helper (must be top-level functions)
+void handleClick(String s)
 {
-  if ( flockButton.contains( e.getX(), e.getY() ) )
-  {  flockClick(); }
+  Button b = controls.buttons[(int)controls.buttonsIndex.get(s)];
+  b.state = !b.state;
+  b.swapColor();
+
+  if (s == "attract")
+  {
+    b = controls.buttons[(int)controls.buttonsIndex.get("repel")];
+    if ( b.state ) { b.state = false; b.swapColor(); }
+  }
   
-  if ( trailButton.contains( e.getX(), e.getY() ) )
-  { trailClick(); }
+  else if (s == "repel")
+  {
+    b = controls.buttons[(int)controls.buttonsIndex.get("attract")];
+    if ( b.state ) { b.state = false; b.swapColor(); }
+  }
   
-  if ( attractButton.contains( e.getX(), e.getY() ) )
-  { attractClick(); }
-  
-  if ( repelButton.contains( e.getX(), e.getY() ) )
-  { repelClick(); }
-  
-  if ( wallButton.contains( e.getX(), e.getY() ) )
-  { wallClick(); }
-  
-  if ( flowButton.contains( e.getX(), e.getY() ) )
-  { flowClick(); }
-}
-
-// Javascript Helpers (must be top-level functions)
-void flockClick()
-{
-  flockButton.state = !flockButton.state;
-  flockButton.swapColor();
-}
-
-void trailClick()
-{
-  trailButton.state = !trailButton.state;
-  trailButton.swapColor();
-}
-
-void attractClick()
-{
-  attractButton.state = !attractButton.state;
-  if ( repelButton.state ) { repelButton.state = false; repelButton.swapColor(); }
-  attractButton.swapColor();
-}
-
-void repelClick()
-{
-  repelButton.state = !repelButton.state;
-  if ( attractButton.state ) { attractButton.state = false; attractButton.swapColor(); }
-  repelButton.swapColor();
-}
-
-void wallClick()
-{
-  wallButton.state = !wallButton.state;
-  wallButton.swapColor();
-}
-
-void flowClick()
-{
-  flowButton.state = !flowButton.state;
-  flowButton.swapColor();
+  controls.stale = true;
 }

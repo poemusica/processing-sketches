@@ -14,38 +14,8 @@ function bindJavascript()
 
 // Access to processing (top-level functions only)
 
-function toggleFlock()
+function toggle(s)
 {
 	var pjs = Processing.getInstanceById("mysketch");
-	pjs.flockClick();
-}
-
-function toggleFlow()
-{
-	var pjs = Processing.getInstanceById("mysketch");
-	pjs.flowClick();
-}
-
-function toggleWalls()
-{
-	var pjs = Processing.getInstanceById("mysketch");
-	pjs.wallClick();
-}
-
-function toggleAttract()
-{
-	var pjs = Processing.getInstanceById("mysketch");
-	pjs.attractClick();
-}
-
-function toggleRepel()
-{
-	var pjs = Processing.getInstanceById("mysketch");
-	pjs.repelClick();
-}
-
-function toggleTrails()
-{
-	var pjs = Processing.getInstanceById("mysketch");
-	pjs.trailClick();
+	pjs.handleClick(s);
 }
