@@ -1,6 +1,7 @@
 <html>
 <head>
-  <script src="../processing-1.4.8.min.js"></script>
+  <title>Demo: 3D Cube (inline pjs)</title>
+  <script src="../libs/processing-1.4.8.min.js"></script>
 </head>
 <body><h1>Processing.js</a></h1>
 <h2>Advanced processing.js via JavaScript</h2>
@@ -20,7 +21,7 @@ var sketch = new Processing.Sketch();
 // define 3D context
 sketch.use3DContext = true;
 // preload the images
-sketch.imageCache.add("pjs.png");
+sketch.imageCache.add("../img/demo-cube_texture.png");
 // attach function (also, can be specified as the single parameter 
 // in the Processing.Sketch object constructor)
 sketch.attachFunction = function(processing) {
@@ -30,7 +31,7 @@ sketch.attachFunction = function(processing) {
 
   processing.setup = function() {
     processing.size(640, 360, processing.P3D);
-    tex = processing.loadImage("pjs.png");
+    tex = processing.loadImage("../img/demo-cube_texture.png");
     processing.textureMode(processing.NORMALIZED);
     processing.fill(255);
     processing.stroke(processing.color(44,48,32));
