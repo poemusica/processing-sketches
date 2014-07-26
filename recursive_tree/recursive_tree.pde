@@ -1,3 +1,4 @@
+float zPval = 0.01;
 
 void setup()
 {
@@ -9,14 +10,16 @@ void draw()
   background( 255 );
   float sw = 10;
   translate(  width/2, height );
+  float xPval = 0.01; 
+  float yPval = 0.01;
   
-  branch( 100, sw );
-  noLoop();
+  branch( 100, sw, xPval, yPval );
+  zPval += 0.01;
 }
 
-void branch( float len, float sw )
+void branch( float len, float sw, float xPval, float yPval )
 {  
-  float theta = random( 0, PI/3 );
+  
   strokeWeight( sw );
   line( 0, 0, 0, -len );
   translate( 0, -len );
@@ -26,20 +29,15 @@ void branch( float len, float sw )
   
   if ( len > 6 )
   {
-    pushMatrix();
-    rotate( theta );
-    branch( len, sw );
-    popMatrix();
+    int n = int(random( 1, 4 ) );
     
-    pushMatrix();
-    rotate( -theta );
-    branch( len, sw );
-    popMatrix();
+    for ( int i = 0; i < n; i++ )
+    {
+        float theta = map( noise( xPval, yPval, zPval ), 0, 1, -PI/2, PI/2 ); 
+        pushMatrix();
+        rotate( theta );
+        branch( len, sw, xPval + 0.01 , yPval + 0.01 );
+        popMatrix();
+    }
   }
-}
-
-void mouseClicked() {
-  
-  loop();
-
 }
