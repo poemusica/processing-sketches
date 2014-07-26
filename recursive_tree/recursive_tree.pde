@@ -9,10 +9,12 @@ void draw()
   background( 255 );
   
   translate(  width/2, height );
-  branch( 100 );
+  float angle = map( mouseX, 0, width, 0, PI/2 );
+  
+  branch( 100, angle );
 }
 
-void branch( float len )
+void branch( float len, float theta )
 {
   line( 0, 0, 0, -len );
   translate( 0, -len );
@@ -22,13 +24,13 @@ void branch( float len )
   if ( len > 6 )
   {
     pushMatrix();
-    rotate( PI/6 );
-    branch( len );
+    rotate( theta );
+    branch( len, theta );
     popMatrix();
     
     pushMatrix();
-    rotate( -PI/6 );
-    branch( len );
+    rotate( -theta );
+    branch( len, theta );
     popMatrix();
   }
 }
