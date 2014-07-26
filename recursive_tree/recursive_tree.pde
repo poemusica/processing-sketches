@@ -1,23 +1,24 @@
 float zPval = 0.01;
+long seed;
 
 void setup()
 {
   size( 600, 400 );
+  seed = (long)random( 0, 1000 );
 }
 
 void draw()
 {
   background( 255 );
+  randomSeed( seed );
   float sw = 10;
   translate(  width/2, height );
-  float xPval = 0.01; 
-  float yPval = 0.01;
   
-  branch( 100, sw, xPval, yPval );
+  branch( 100, sw );
   zPval += 0.01;
 }
 
-void branch( float len, float sw, float xPval, float yPval )
+void branch( float len, float sw )
 {  
   
   strokeWeight( sw );
@@ -33,11 +34,12 @@ void branch( float len, float sw, float xPval, float yPval )
     
     for ( int i = 0; i < n; i++ )
     {
-        float theta = map( noise( xPval, yPval, zPval ), 0, 1, -PI/2, PI/2 ); 
-        pushMatrix();
-        rotate( theta );
-        branch( len, sw, xPval + 0.01 , yPval + 0.01 );
-        popMatrix();
+      float randAng = random( -PI/2, PI/2 );
+      float theta = map( noise( randAng, zPval ), 0, 1, -PI/2, PI/2 );
+      pushMatrix();
+      rotate( theta );
+      branch( len, sw );
+      popMatrix();
     }
   }
 }
