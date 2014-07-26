@@ -1,3 +1,4 @@
+
 void setup()
 {
   size( 600, 400 );
@@ -8,13 +9,14 @@ void draw()
   background( 255 );
   float sw = 10;
   translate(  width/2, height );
-  float angle = map( mouseX, 0, width, 0, PI/2 );
   
-  branch( 100, angle, sw );
+  branch( 100, sw );
+  noLoop();
 }
 
-void branch( float len, float theta, float sw )
-{
+void branch( float len, float sw )
+{  
+  float theta = random( 0, PI/3 );
   strokeWeight( sw );
   line( 0, 0, 0, -len );
   translate( 0, -len );
@@ -26,12 +28,18 @@ void branch( float len, float theta, float sw )
   {
     pushMatrix();
     rotate( theta );
-    branch( len, theta, sw );
+    branch( len, sw );
     popMatrix();
     
     pushMatrix();
     rotate( -theta );
-    branch( len, theta, sw );
+    branch( len, sw );
     popMatrix();
   }
+}
+
+void mouseClicked() {
+  
+  loop();
+
 }
