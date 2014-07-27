@@ -14,29 +14,28 @@ void draw()
 class LSystem
 {
   String current;
-  String next;
   
   LSystem( String axiom )
   {
     current = axiom;
-    next = "";
   }
   
   void applyRules()
   {
+    StringBuffer next = new StringBuffer(); 
     for ( int i = 0; i < current.length(); i++ )
    {
      char c = current.charAt( i );
      if ( c == 'A' )
      {
-       next += "AB";
+       next.append( "AB" );
      }
      if ( c == 'B' )
      {
-       next += "A";
+       next.append( "A" );
      }
    }
-  current = next; 
+  current = next.toString(); 
   }
 }
 
