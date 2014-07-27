@@ -28,18 +28,25 @@ void branch( float len, float sw )
   len *= 0.75;
   sw *= 0.75;
   
-  if ( len > 6 )
+  if ( len > 10 )
   {
     int n = int(random( 1, 4 ) );
     
     for ( int i = 0; i < n; i++ )
     {
-      float randAng = random( -PI/2, PI/2 );
-      float theta = map( noise( randAng, zPval ), 0, 1, -PI/2, PI/2 );
+      float theta = random( -PI/4, PI/4 );
+      float multiplier = ( 1 / ( 5 * len ) );
+      float offset = map( noise( theta, zPval ), 0, 1, ( -PI * multiplier ), ( PI * multiplier ) );
       pushMatrix();
-      rotate( theta );
+      rotate( theta + offset );
       branch( len, sw );
       popMatrix();
     }
+  }
+  else
+  {
+    fill( 0 );
+    float r = random( 20, 40 );
+    ellipse( 0, 0, r, r );
   }
 }
