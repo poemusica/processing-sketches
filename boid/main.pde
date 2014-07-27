@@ -6,6 +6,7 @@ Javascript javascript = null;
 void bindJavascript( Javascript js ) { javascript = js; }
 
 // Globals
+Flock flock;
 ControlPanel controls;
 FlowField perlinFlow;
 
@@ -46,17 +47,8 @@ void setup()
   bgTexture = new Texture( bgc );
 
   
-  // make blobs
-  for ( int i = 0; i < blobs.length; i++ ) 
-  {
-    float x = random( width );
-    float y = random( height );
-    color fillColor = lerpPerlinColor( i );
-    strokeWeight( 2 );
-    color strokeColor = perlinColor( i );
-    Blob b = new Blob( x, y, fillColor, strokeColor );
-    blobs[ i ] = b;
-  }
+  // make creatures
+  flock = new Flock( 80 );
   
   // make buttons
   controls = new ControlPanel();
@@ -89,12 +81,8 @@ void draw()
     controls.update();
     controls.draw();
   }
-       
-  for ( Blob b : blobs )
-  {
-    b.update();
-    b.draw();
-  }
+  
+  flock.draw();
 
 }
 

@@ -1,7 +1,5 @@
 // Globals
 
-Blob[] blobs = new Blob[ 80 ];
-
 static float LOCAL_RANGE = 60;
 static float WANDER_STRENGTH = 1;
 static float ALI_STRENGTH = 1;
@@ -15,8 +13,8 @@ static float WALL_STRENGTH = 2;
 static float PROX_MIN =  30;
 static float PROX_MAX = 45;
 
-// Defines Blob class
-class Blob
+// Defines Creature class
+class Creature
 {  
   PVector pos, vel, acc;
   float maxSpeed = 5, maxForce = 0.5;
@@ -25,7 +23,7 @@ class Blob
   float r; // radius of shape. can also be used as a visualizer for mass. 
   
   // Constructor
-  Blob ( float x, float y, color fc, color sc ) 
+  Creature ( float x, float y, color fc, color sc ) 
   {
     pos = new PVector( x, y );
     vel = PVector.random2D(); // creates a PVector of length 1 pointing in a random direction.
@@ -129,7 +127,7 @@ class Blob
   {
     int tooNear = 0;
     PVector desired = new PVector( 0 , 0 );
-    for ( Blob b : blobs )
+    for ( Creature b : flock.creatures )
     {
       if ( b == this ) { continue; }
       
@@ -160,7 +158,7 @@ class Blob
   {
     int tooFar = 0;
     PVector desired = new PVector( 0, 0 );
-    for ( Blob b : blobs )
+    for ( Creature b : flock.creatures )
     {
       if ( b == this ) { continue; }
       
@@ -191,7 +189,7 @@ class Blob
   {
     int local = 0;
     PVector desired = new PVector( 0, 0 );
-    for ( Blob b : blobs )
+    for ( Creature b : flock.creatures )
     {
       if ( b == this ) { continue; }
       
@@ -321,7 +319,7 @@ class Blob
     acc.mult( 0 );
     
     // debugging
-    //if ( this == blobs[ 0 ] ) { println( pos, vel, flockButton.state ); }
+    //if ( this == flock.creatures[ 0 ] ) { println( pos, vel, flockButton.state ); }
     
     // screen wrap
     if ( !controls.buttons[(int)controls.buttonsIndex.get("walls")].state )
@@ -329,19 +327,19 @@ class Blob
   }
       
   // Draw    
-  void draw()
+  void draw( PGraphics pg )
   {
     float rotation = vel.heading();
-    stroke( 2 );
-    stroke( cstroke );
-    fill( cfill );
+    pg.stroke( 2 );
+    pg.stroke( cstroke );
+    pg.fill( cfill );
     
-    pushMatrix();
-    translate( pos.x, pos.y );
-    rotate( rotation );
+    pg.pushMatrix();
+    pg.translate( pos.x, pos.y );
+    pg.rotate( rotation );
     
-    triangle( -r, r/2, r, 0, -r, -r/2 );
-    popMatrix();
+    pg.triangle( -r, r/2, r, 0, -r, -r/2 );
+    pg.popMatrix();
     
   }
 }

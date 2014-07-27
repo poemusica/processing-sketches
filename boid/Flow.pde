@@ -1,4 +1,3 @@
-// Defines vector flow field class.
 class FlowField
 {
   int cellSize;
