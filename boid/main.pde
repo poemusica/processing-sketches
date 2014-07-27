@@ -19,6 +19,7 @@ public color theme2;
 
 public color theme;
 public color bgc;
+public Texture bgTexture;
 
 // Setup the Processing Canvas
 void setup()
@@ -26,7 +27,7 @@ void setup()
   size( 800, 500 );
   smooth();
   frameRate( 30 );
-  
+    
   // for perlinColor
   offset = 75;
   r0 = int( random( offset, 255 - offset ) );
@@ -40,6 +41,9 @@ void setup()
   
   theme = lerpColor( theme1, theme2, 0.5 );
   bgc = color( 255 - red( theme ), 255 - green( theme ), 255 - blue( theme ), 255 ); 
+
+  // background texture
+  bgTexture = new Texture( bgc );
 
   
   // make blobs
@@ -74,7 +78,8 @@ void draw()
   if ( controls.buttons[(int)controls.buttonsIndex.get("flow")].state )
   { 
     perlinFlow.update();
-    perlinFlow.draw();
+    bgTexture.draw();
+    //perlinFlow.draw();
   }
     
   // If javascript is not bound, draw buttons in processing.
@@ -103,6 +108,7 @@ void mouseClicked( MouseEvent e )
     { handleClick(b.label); } 
   }
 }
+
 
 // UTILITIES //
 
