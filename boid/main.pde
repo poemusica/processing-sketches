@@ -9,10 +9,16 @@ void bindJavascript( Javascript js ) { javascript = js; }
 ControlPanel controls;
 FlowField perlinFlow;
 
-static int offset = 75;
-public int r0 = int( random( offset, 255 - offset ) );
-public int g0 = int( random( offset, 255 - offset ) );
-public int b0 = int( random( offset, 255 - offset ) );
+static int offset;
+public int r0;
+public int g0;
+public int b0;
+
+public color theme1;
+public color theme2;
+
+public color theme;
+public color bgc;
 
 // Setup the Processing Canvas
 void setup()
@@ -21,13 +27,29 @@ void setup()
   smooth();
   frameRate( 30 );
   
+  // for perlinColor
+  offset = 75;
+  r0 = int( random( offset, 255 - offset ) );
+  g0 = int( random( offset, 255 - offset ) );
+  b0 = int( random( offset, 255 - offset ) );
+
+  // for lerpPerlinColor
+  theme1 = randomColor();
+  theme2 = randomColor();
+  
+  
+  theme = lerpColor( theme1, theme2, 0.5 );
+  bgc = color( 255 - red( theme ), 255 - green( theme ), 255 - blue( theme ), 255 ); 
+
+  
   // make blobs
   for ( int i = 0; i < blobs.length; i++ ) 
   {
     float x = random( width );
     float y = random( height );
-    color fillColor = perlinColor(i);
-    color strokeColor = perlinColor(i);
+    color fillColor = lerpPerlinColor( i );
+    strokeWeight( 2 );
+    color strokeColor = perlinColor( i );
     Blob b = new Blob( x, y, fillColor, strokeColor );
     blobs[ i ] = b;
   }
@@ -87,8 +109,15 @@ void mouseClicked( MouseEvent e )
 // Make a random color.
 color randomColor() 
 {
-  return color( random(255), random(255), random(255), 220 );
+  return color( random(255), random(255), random(255) );
 }
+
+color lerpPerlinColor( float n )
+{
+  float amt = noise( 1, n );
+  return lerpColor( theme1, theme2, amt );
+}
+
 
 color perlinColor( int n )
 {

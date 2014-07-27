@@ -22,10 +22,10 @@ class FlowField
     workingBuffer = createGraphics(width, height);
     visibleBuffer = createGraphics(width, height);
     visibleBuffer.beginDraw();
-    visibleBuffer.background(0xFF33FFCC);
+    visibleBuffer.background( bgc );
     visibleBuffer.endDraw();
     workingBuffer.beginDraw();
-    workingBuffer.background(0xFF33FFCC);
+    workingBuffer.background( bgc );
     workingBuffer.endDraw();
     reCompute();
   }
@@ -98,7 +98,7 @@ class FlowField
       visibleBuffer = workingBuffer;
       workingBuffer = temp;
       workingBuffer.beginDraw();
-      workingBuffer.background( 0xFF33FFCC );
+      workingBuffer.background( bgc ); //bgc is global
       workingBuffer.endDraw();
       bookmark = 0;
     }
