@@ -43,7 +43,7 @@ void branch( float len, float sw )
       popMatrix();
     }
   }
-  else
+  if ( random( 1, 50 ) > len )
   {
     fill( 0 );
     float r = random( 20, 40 );
