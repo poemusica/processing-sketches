@@ -1,14 +1,12 @@
-// MAIN SETUP AND DRAWING //
+// PROGRAM GLOBALS //
+Flock aflock;
+ControlPanel controls;
+FlowField perlinFlow;
 
 // Bind Javascript
 interface Javascript {}
 Javascript javascript = null;
 void bindJavascript( Javascript js ) { javascript = js; }
-
-// Globals
-Flock flock;
-ControlPanel controls;
-FlowField perlinFlow;
 
 static int offset;
 public int r0;
@@ -22,7 +20,10 @@ public color theme;
 public color bgc;
 public Texture bgTexture;
 
-// Setup the Processing Canvas
+
+// MAIN SETUP AND DRAW //
+
+// setup processing canvas
 void setup()
 {
   size( 800, 500 );
@@ -48,7 +49,7 @@ void setup()
 
   
   // make creatures
-  flock = new Flock( 80 );
+  aflock = new Flock( 80 );
   
   // make buttons
   controls = new ControlPanel();
@@ -57,21 +58,20 @@ void setup()
   perlinFlow = new FlowField( 25 );
 }
 
-// Main draw loop
+// main draw loop
 void draw()
 {
   // benchmark
   //println( frameRate );
   
-  // Background is now part of perlin flow.
-  //if ( !controls.buttons[5].state ) { background( 0xFF33FFCC ); }
+  // draw background
+  bgTexture.draw();
   
   // Draw flow field vectors to off-screen buffer
   if ( controls.buttons[(int)controls.buttonsIndex.get("flow")].state )
   { 
     perlinFlow.update();
-    bgTexture.draw();
-    //perlinFlow.draw();
+    perlinFlow.draw();
   }
     
   // If javascript is not bound, draw buttons in processing.
@@ -82,7 +82,7 @@ void draw()
     controls.draw();
   }
   
-  flock.draw();
+  aflock.draw();
 
 }
 
@@ -90,6 +90,7 @@ void draw()
 // MOUSE EVENTS //
 void mouseClicked( MouseEvent e )
 {
+  if ( javascript != null ) { return; }
   for (Button b : controls.buttons)
   {
     if ( b.contains(e.getX(), e.getY()) )
@@ -100,11 +101,12 @@ void mouseClicked( MouseEvent e )
 
 // COLOR UTILITIES //
 
-// Make a random color.
+
 color randomColor() 
 {
   return color( random(255), random(255), random(255) );
 }
+
 
 color lerpPerlinColor( float n )
 {

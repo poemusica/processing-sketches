@@ -1,12 +1,12 @@
 class Texture
 {
-  PImage buffer;
+  PImage pimage;
   color base;
   int offset;
   
   Texture( color c )
   {
-    buffer = createImage( width, height, RGB );
+    pimage = createImage( width, height, RGB );
     base = c;
     offset = 75;
     
@@ -16,7 +16,7 @@ class Texture
       for ( int y = 0; y < height; y++ )
       {
         color pixelColor = perlinPixel( float( x ) / 100, float( y ) / 100 );
-        buffer.pixels[ y * width + x ] =  pixelColor;
+        pimage.pixels[ y * width + x ] =  pixelColor;
       }
     }
   }
@@ -38,6 +38,6 @@ class Texture
   
   void draw()
   {
-    image( buffer, 0, 0 );
+    image( pimage, 0, 0 );
   }
 }

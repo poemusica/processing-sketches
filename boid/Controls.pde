@@ -32,7 +32,7 @@ class ControlPanel
  void fillBuffer()
  {
    pg.beginDraw();
-   pg.clear();  // WARNING: BREAKS Processing.js!
+   pg.background( 0, 0, 0, 0 );
    for ( Button b : buttons )
    {
      b.draw( pg );
