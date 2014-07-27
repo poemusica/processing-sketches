@@ -110,7 +110,7 @@ void mouseClicked( MouseEvent e )
 }
 
 
-// UTILITIES //
+// COLOR UTILITIES //
 
 // Make a random color.
 color randomColor() 
