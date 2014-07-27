@@ -46,7 +46,7 @@ void branch( float len, float sw )
   if ( random( 1, 50 ) > len )
   {
     fill( 0 );
-    float r = random( 20, 40 );
-    ellipse( 0, 0, r, r );
+    float r = random( 50, 100 );
+    triangle( -r/len, ( -r * 1.5 )/len, 0, 0, r/len, ( -r * 1.5 )/len );
   }
 }
