@@ -25,7 +25,7 @@ class Blob
   float r; // radius of shape. can also be used as a visualizer for mass. 
   
   // Constructor
-  Blob ( float x, float y ) 
+  Blob ( float x, float y, color fc, color sc ) 
   {
     pos = new PVector( x, y );
     vel = PVector.random2D(); // creates a PVector of length 1 pointing in a random direction.
@@ -34,8 +34,8 @@ class Blob
     //r = random(5, 15);
     r = 8;
     
-    cstroke = randomColor();
-    cfill = randomColor();
+    cstroke = sc;
+    cfill = fc;
   }
   
   // solid walls
