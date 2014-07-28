@@ -30,8 +30,8 @@ class Flock
     pg1 = createGraphics( width, height );
     pg2 = createGraphics( width, height );
     pg2.beginDraw(); pg2.endDraw();
-    trailDelay = 4;
-    trailFade = 200;
+    trailDelay = int( random( 1, 3 ) );
+    trailFade = int( random( 150, 245 ) );
     theme1 = theme.randomColor( 0, 255 );
     theme2 = theme.randomColor( 0, 255 );
     ptheme = theme.randomColor( 75, 255 - 75 );
