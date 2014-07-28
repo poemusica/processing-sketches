@@ -29,8 +29,9 @@ class Flock
     
     pg1 = createGraphics( width, height );
     pg2 = createGraphics( width, height );
-    trailDelay = 1;
-    trailFade = 220;
+    pg2.beginDraw(); pg2.endDraw();
+    trailDelay = 4;
+    trailFade = 200;
     theme1 = theme.randomColor( 0, 255 );
     theme2 = theme.randomColor( 0, 255 );
     ptheme = theme.randomColor( 75, 255 - 75 );
@@ -51,12 +52,18 @@ class Flock
   void draw()
   {
     pg2.beginDraw();
-    pg2.background( 0, 0, 0, 0 );
     if ( controls.buttons[(int)controls.buttonsIndex.get("trails")].state && ( frameCount % trailDelay == 0 ) )
     {
+     pg2.background( 0, 0, 0, 0 );
      pg2.tint( 255, trailFade );
      pg2.image( pg1.get(), 0, 0 ); 
     }
+//    else
+//    {
+//      pg2.background( 0, 0, 0, 0 );
+//      pg2.tint( 255, trailFade );
+//      pg2.image( pg2.get(), 0, 0 );
+//    }
     pg2.endDraw();
     
     pg1.beginDraw();
