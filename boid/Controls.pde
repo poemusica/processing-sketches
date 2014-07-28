@@ -68,8 +68,8 @@ class Button
     pos = p;
     label = l;
     state = s;
-    cstroke = theme.randomColor();
-    cfill = theme.randomColor();
+    cstroke = theme.randomColor( 0, 255 );
+    cfill = theme.randomColor( 0, 255 );
   }
   
   boolean contains( int x, int y )

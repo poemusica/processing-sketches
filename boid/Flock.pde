@@ -5,6 +5,8 @@ class Flock
   PGraphics pg;
   Behavior behavior;
   
+  color theme1, theme2, ptheme;
+  
   float localRange = 60;
   float wanderStrength = 1;
   float aliStrength = 1;
@@ -23,17 +25,20 @@ class Flock
   {
     size = n;
     creatures = new Creature[ size ];
-    pg = createGraphics( width, height );
-    
+    pg = createGraphics( width, height );  
     behavior = new Behavior( this );
+    
+    theme1 = theme.randomColor( 0, 255 );
+    theme2 = theme.randomColor( 0, 255 );
+    ptheme = theme.randomColor( 75, 255 - 75 );
     
     for ( int i = 0; i < size; i++ ) 
     {
       float x = random( width );
       float y = random( height );
       
-      color fillColor = theme.lerpPerlinColor( i );
-      color strokeColor = theme.perlinColor( i );
+      color fillColor = theme.lerpPerlinColor( i, theme1, theme2 );
+      color strokeColor = theme.perlinColor( i, ptheme, 75 );
       
       Creature k = new Creature( x, y, fillColor, strokeColor, this );
       creatures[ i ] = k;
@@ -58,4 +63,20 @@ class Flock
     image( pg, 0, 0 );
   }
   
+}
+
+
+ArrayList<Flock> makeFlocks( int lo, int hi )
+{
+  ArrayList<Flock> flocks;
+ flocks = new ArrayList<Flock>(); 
+  int i = hi;
+  while ( i >= lo )
+  {
+    int num = int( random( lo, i ) );
+    Flock f = new Flock( num );
+    flocks.add( f );
+    i -= num;
+  }
+  return flocks;
 }
