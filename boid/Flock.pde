@@ -32,8 +32,8 @@ class Flock
       float x = random( width );
       float y = random( height );
       
-      color fillColor = lerpPerlinColor( i );
-      color strokeColor = perlinColor( i );
+      color fillColor = theme.lerpPerlinColor( i );
+      color strokeColor = theme.perlinColor( i );
       
       Creature k = new Creature( x, y, fillColor, strokeColor, this );
       creatures[ i ] = k;
