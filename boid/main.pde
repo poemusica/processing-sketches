@@ -5,6 +5,7 @@ ControlPanel controls;
 FlowField perlinFlow;
 Theme theme;
 Texture bgTexture;  // this should eventually be a background art object.
+Cursor cursor;
 
 // Bind Javascript
 interface Javascript {}
@@ -25,6 +26,7 @@ void setup()
   bgTexture = new Texture( theme.backgroundColor( flockList.get( 0 ).theme1, flockList.get( 0 ).theme2 ) ); // bg uses 1st flock's color complement
   controls = new ControlPanel(); // make native buttons
   perlinFlow = new FlowField( 25 ); // make vector field
+  cursor = new Cursor();
 }
 
 
@@ -40,17 +42,9 @@ void draw()
   
   for ( Flock f : flockList ) { f.draw(); }
   
+  cursor.draw();
+  
   //println( frameRate ); // benchmark
 }
 
 
-// MOUSE EVENTS //
-void mouseClicked( MouseEvent e )
-{
-  if ( javascript != null ) { return; }
-  for (Button b : controls.buttons)
-  {
-    if ( b.contains(e.getX(), e.getY()) )
-    { handleClick(b.label); } 
-  }
-}
