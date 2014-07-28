@@ -4,7 +4,7 @@ class Flock
   int size, trailDelay, trailFade;
   Behavior behavior;
   
-  PGraphics pg1, pg2;
+  PGraphics pg1, pg2, pg3;
   color theme1, theme2, ptheme;
   
   float localRange = 60;
@@ -29,6 +29,7 @@ class Flock
     
     pg1 = createGraphics( width, height );
     pg2 = createGraphics( width, height );
+    pg3 = createGraphics( width, height );
     pg2.beginDraw(); pg2.endDraw();
     trailDelay = 4;
     trailFade = 200;
@@ -51,19 +52,24 @@ class Flock
   
   void draw()
   {
+    boolean trailVal = controls.buttons[(int)controls.buttonsIndex.get("trails")].state;
     pg2.beginDraw();
-    if ( controls.buttons[(int)controls.buttonsIndex.get("trails")].state && ( frameCount % trailDelay == 0 ) )
+    if ( trailVal && ( frameCount % trailDelay == 0 ) )
     {
-     pg2.background( 0, 0, 0, 0 );
+     pg2.background( 0, 0, 0, 0 ); // clear
      pg2.tint( 255, trailFade );
      pg2.image( pg1.get(), 0, 0 ); 
     }
-//    else
-//    {
-//      pg2.background( 0, 0, 0, 0 );
-//      pg2.tint( 255, trailFade );
-//      pg2.image( pg2.get(), 0, 0 );
-//    }
+    else if ( !trailVal && frameCount % trailDelay == 0 ) // frameCount check makes trails disappear more slowly
+    {
+      pg3.beginDraw();
+      pg3.background( 0, 0, 0, 0 );
+      pg3.image( pg2.get(), 0, 0 );
+      pg3.endDraw();
+      pg2.background( 0, 0, 0, 0 );
+      pg2.tint( 255, trailFade );
+      pg2.image( pg3, 0, 0 );
+    }
     pg2.endDraw();
     
     pg1.beginDraw();
