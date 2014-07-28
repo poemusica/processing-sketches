@@ -49,27 +49,40 @@ class Flock
     }    
   }
   
+  void contrailsOn()
+  {
+    pg2.beginDraw();
+    pg2.background( 0, 0, 0, 0 ); // clear
+    pg2.tint( 255, trailFade );
+    pg2.image( pg1.get(), 0, 0 ); 
+    pg2.endDraw();
+  }
+  
+  void contrailsOff()
+  {
+    pg1.beginDraw();
+    pg1.background( 0, 0, 0, 0 );
+    pg1.image( pg2.get(), 0, 0 );
+    pg1.endDraw();
+    
+    pg2.beginDraw();
+    pg2.background( 0, 0, 0, 0 );
+    pg2.tint( 255, trailFade );
+    pg2.image( pg1, 0, 0 );
+    pg2.endDraw();
+  }
+  
   void draw()
   {
     boolean trailVal = controls.buttons[(int)controls.buttonsIndex.get("trails")].state;
-    pg2.beginDraw();
     if ( trailVal && ( frameCount % trailDelay == 0 ) )
     {
-     pg2.background( 0, 0, 0, 0 ); // clear
-     pg2.tint( 255, trailFade );
-     pg2.image( pg1.get(), 0, 0 ); 
+      contrailsOn();
     }
     else if ( !trailVal && frameCount % trailDelay == 0 ) // frameCount check makes trails disappear more slowly
     {
-      pg1.beginDraw();
-      pg1.background( 0, 0, 0, 0 );
-      pg1.image( pg2.get(), 0, 0 );
-      pg1.endDraw();
-      pg2.background( 0, 0, 0, 0 );
-      pg2.tint( 255, trailFade );
-      pg2.image( pg1, 0, 0 );
+      contrailsOff();
     }
-    pg2.endDraw();
     
     pg1.beginDraw();
     pg1.background( 0, 0, 0, 0 );
