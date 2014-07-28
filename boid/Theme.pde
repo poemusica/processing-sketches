@@ -26,13 +26,13 @@ class Theme
     float r0 = red( t );
     float g0 = green( t );
     float b0 = blue( t );
-    float rval = noise( 1 + r0, n );
+    float rval = noise( r0, n );
     int r1 = int( map( rval, 0, 1, -offset, offset ) );
-    float gval = noise( 2 + g0, n );
+    float gval = noise( g0, n );
     int g1 = int( map( gval, 0, 1, -offset, offset ) );
-    float bval = noise( 3 + b0, n );
+    float bval = noise( b0, n );
     int b1 = int( map( bval, 0, 1, -offset, offset ) );
-    color c = color( r0 + r1, g0 + g1, b0 + b1, 220 );
+    color c = color( r0 + r1, g0 + g1, b0 + b1, 255 );
     return c;
   }
 }

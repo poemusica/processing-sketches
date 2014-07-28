@@ -1,10 +1,10 @@
 class Flock
 {
   Creature[] creatures;
-  int size;
-  PGraphics pg;
+  int size, trailDelay, trailFade;
   Behavior behavior;
   
+  PGraphics pg1, pg2;
   color theme1, theme2, ptheme;
   
   float localRange = 60;
@@ -24,10 +24,13 @@ class Flock
   Flock( int n )
   {
     size = n;
-    creatures = new Creature[ size ];
-    pg = createGraphics( width, height );  
+    creatures = new Creature[ size ];    
     behavior = new Behavior( this );
     
+    pg1 = createGraphics( width, height );
+    pg2 = createGraphics( width, height );
+    trailDelay = 1;
+    trailFade = 220;
     theme1 = theme.randomColor( 0, 255 );
     theme2 = theme.randomColor( 0, 255 );
     ptheme = theme.randomColor( 75, 255 - 75 );
@@ -47,20 +50,28 @@ class Flock
   
   void draw()
   {
-    pg.beginDraw();
+    pg2.beginDraw();
+    pg2.background( 0, 0, 0, 0 );
+    if ( controls.buttons[(int)controls.buttonsIndex.get("trails")].state && ( frameCount % trailDelay == 0 ) )
+    {
+     pg2.tint( 255, trailFade );
+     pg2.image( pg1.get(), 0, 0 ); 
+    }
+    pg2.endDraw();
     
-    if ( !controls.buttons[(int)controls.buttonsIndex.get("trails")].state )
-    { pg.background( 0, 0, 0, 0 ); }
-    
+    pg1.beginDraw();
+    pg1.background( 0, 0, 0, 0 );
+    pg1.image( pg2, 0, 0 );
+    pg1.tint( 255, 255 );
     for ( Creature k : creatures )
     {
       k.update();
       k.move();
-      k.draw( pg );
+      k.draw( pg1 );
     }
-    pg.endDraw();
+    pg1.endDraw();
     
-    image( pg, 0, 0 );
+    image( pg1, 0, 0 );
   }
   
 }
