@@ -2,6 +2,7 @@
 class KochLine
 {
   PVector start, end;
+  float angle = 140;
   
   KochLine( PVector a, PVector b )
   {
